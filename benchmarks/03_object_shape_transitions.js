@@ -7,13 +7,18 @@ var now = typeof performance !== "undefined" && performance.now ? function() { r
 var ITERATIONS = 30000;
 var MOD = 100000007;
 
-var start = now();
-var total = 0;
-for (var i = 0; i < ITERATIONS; i = i + 1) {
-    var obj = { x: i, y: i * 2, sum: 0 };
-    obj.sum = obj.x + obj.y;
-    total = (total + obj.sum) % MOD;
+function runObjectShapes() {
+    var total = 0;
+    for (var i = 0; i < ITERATIONS; i = i + 1) {
+        var obj = { x: i, y: i * 2, sum: 0 };
+        obj.sum = obj.x + obj.y;
+        total = (total + obj.sum) % MOD;
+    }
+    return total;
 }
+
+var start = now();
+var total = runObjectShapes();
 var end = now();
 var duration = Math.max(1, end - start);
 

@@ -7,23 +7,27 @@ var now = typeof performance !== "undefined" && performance.now ? function() { r
 var ITERATIONS = 10000;
 var MOD = 100000007;
 
-var alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+function runStringConcat() {
+    var alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var acc = "";
+    var checksum = 0;
 
-var start = now();
-var acc = "";
-var checksum = 0;
-
-for (var i = 0; i < ITERATIONS; i = i + 1) {
-    var startIdx = i % 20;
-    var sub = alphabet.substring(startIdx, startIdx + 8);
-    acc = acc + sub;
-    if (acc.length > 200) {
-        checksum = (checksum + acc.length) % MOD;
-        acc = acc.substring(50);
+    for (var i = 0; i < ITERATIONS; i = i + 1) {
+        var startIdx = i % 20;
+        var sub = alphabet.substring(startIdx, startIdx + 8);
+        acc = acc + sub;
+        if (acc.length > 200) {
+            checksum = (checksum + acc.length) % MOD;
+            acc = acc.substring(50);
+        }
     }
+
+    checksum = (checksum + acc.length) % MOD;
+    return checksum;
 }
 
-checksum = (checksum + acc.length) % MOD;
+var start = now();
+var checksum = runStringConcat();
 var end = now();
 var duration = Math.max(1, end - start);
 

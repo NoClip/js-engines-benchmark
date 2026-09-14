@@ -17,11 +17,16 @@ function myHash(data, len) {
     return hashVal;
 }
 
-var start = now();
-var checksum = 0;
-for (var i = 0; i < ITERATIONS; i = i + 1) {
-    checksum = (checksum + myHash(i, 6)) % MOD;
+function runCryptoHash() {
+    var checksum = 0;
+    for (var i = 0; i < ITERATIONS; i = i + 1) {
+        checksum = (checksum + myHash(i, 6)) % MOD;
+    }
+    return checksum;
 }
+
+var start = now();
+var checksum = runCryptoHash();
 var end = now();
 var duration = Math.max(1, end - start);
 

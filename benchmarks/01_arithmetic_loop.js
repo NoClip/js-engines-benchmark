@@ -7,11 +7,16 @@ var now = typeof performance !== "undefined" && performance.now ? function() { r
 var ITERATIONS = 1000000;
 var MOD = 100000007;
 
-var start = now();
-var sum = 0;
-for (var i = 0; i < ITERATIONS; i = i + 1) {
-    sum = (sum + ((i ^ 3) * 2)) % MOD;
+function runArithmeticLoop() {
+    var sum = 0;
+    for (var i = 0; i < ITERATIONS; i = i + 1) {
+        sum = (sum + ((i ^ 3) * 2)) % MOD;
+    }
+    return sum;
 }
+
+var start = now();
+var sum = runArithmeticLoop();
 var end = now();
 var duration = Math.max(1, end - start);
 
