@@ -1,0 +1,65 @@
+{
+  "$schema": "./engines.schema.json",
+  "engines": [
+    {
+      "id": "r8",
+      "name": "R8 (Pure Safe Rust)",
+      "command": "d:/Work/Chromium-Rust/target/release/d8.exe",
+      "args": ["{file}"],
+      "enabled": "auto",
+      "version_args": ["--version"],
+      "description": "Google V8 Engine 100% reimplemented in Pure Safe Rust (Zero C++, Zero Dependencies)",
+      "color": "#e06c75"
+    },
+    {
+      "id": "v8_turbofan",
+      "name": "Google V8 (TurboFan Full JIT)",
+      "command": "node",
+      "args": ["{file}"],
+      "enabled": "auto",
+      "version_args": ["-v"],
+      "description": "Official Google V8 C++ Engine with full TurboFan optimizing machine code JIT",
+      "color": "#61afef"
+    },
+    {
+      "id": "v8_jitless",
+      "name": "Google V8 (Jitless Interpreter)",
+      "command": "node",
+      "args": ["--jitless", "{file}"],
+      "enabled": "auto",
+      "version_args": ["-v"],
+      "description": "Official Google V8 running in pure bytecode interpreter mode (--jitless)",
+      "color": "#e5c07b"
+    },
+    {
+      "id": "bun",
+      "name": "Bun (JavaScriptCore)",
+      "command": "bun",
+      "args": ["run", "{file}"],
+      "enabled": "auto",
+      "version_args": ["--version"],
+      "description": "WebKit JavaScriptCore runtime packaged via Bun",
+      "color": "#f5a742"
+    },
+    {
+      "id": "deno",
+      "name": "Deno (V8 Runtime)",
+      "command": "deno",
+      "args": ["run", "{file}"],
+      "enabled": "auto",
+      "version_args": ["--version"],
+      "description": "Deno TypeScript/JavaScript runtime powered by Google V8",
+      "color": "#98c379"
+    },
+    {
+      "id": "quickjs",
+      "name": "QuickJS",
+      "command": "qjs",
+      "args": ["{file}"],
+      "enabled": "auto",
+      "version_args": ["-h"],
+      "description": "Fabrice Bellard's lightweight C JavaScript engine",
+      "color": "#c678dd"
+    }
+  ]
+}

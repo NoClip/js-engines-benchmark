@@ -1,0 +1,22 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Results and temporary data
+results/*.json
+!results/.gitkeep
+results/*.md
+report.html
+
+# Virtual environments
+venv/
+.env/
+env/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
