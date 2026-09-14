@@ -3,7 +3,7 @@
   "engines": [
     {
       "id": "r8",
-      "name": "R8 (Pure Safe Rust)",
+      "name": "R8 (Rust V8)",
       "command": "d:/Work/Chromium-Rust/target/release/d8.exe",
       "args": ["{file}"],
       "enabled": "auto",

@@ -2,7 +2,7 @@
 
 An automated, high-precision performance benchmarking and mathematical checksum validation suite for JavaScript and WebAssembly runtimes.
 
-Built to compare **Google V8**, **R8 (Pure Safe Rust V8)**, **Bun (JavaScriptCore)**, **Deno**, **QuickJS**, and any future JavaScript engines with zero code modifications.
+Built to compare **Google V8**, **R8 (Rust V8)**, **Bun (JavaScriptCore)**, **Deno**, **QuickJS**, and any future JavaScript engines with zero code modifications.
 
 ---
 
