@@ -1,5 +1,9 @@
 // Benchmark 09: WebSocket Broadcast & Framing
-// Inspired by Bun's "Running a WebSocket chat server (32 clients broadcasting)"
+// -------------------------------------------------------------------------------------
+// Adapted from the Bun Benchmark Suite (https://github.com/oven-sh/bun/tree/main/bench)
+// Originally designed & created by Jarred Sumner and the Oven team (oven-sh/bun).
+// Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
+// -------------------------------------------------------------------------------------
 // Tests RFC 6455 frame masking/unmasking (4-byte XOR over Uint8Array) and multi-client broadcast dispatch.
 
 var log = typeof console !== "undefined" && console.log ? console.log : print;

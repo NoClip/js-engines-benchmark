@@ -1,5 +1,9 @@
 // Benchmark 12: Package Dependency Tree & SemVer Resolver
-// Inspired by Bun's "Installing a Next.js app (T3-stack, 25 direct dependencies, ~220 packages)"
+// -------------------------------------------------------------------------------------
+// Adapted from the Bun Benchmark Suite (https://github.com/oven-sh/bun/tree/main/bench)
+// Originally designed & created by Jarred Sumner and the Oven team (oven-sh/bun).
+// Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
+// -------------------------------------------------------------------------------------
 // Tests DAG dependency graph building, SemVer range matching, deduplication, and topological sort.
 
 var log = typeof console !== "undefined" && console.log ? console.log : print;

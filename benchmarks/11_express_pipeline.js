@@ -1,5 +1,9 @@
 // Benchmark 11: Express HTTP Request & Middleware Pipeline
-// Inspired by Bun's "Serving Express over HTTPS (hello-world app · requests per second)"
+// -------------------------------------------------------------------------------------
+// Adapted from the Bun Benchmark Suite (https://github.com/oven-sh/bun/tree/main/bench)
+// Originally designed & created by Jarred Sumner and the Oven team (oven-sh/bun).
+// Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
+// -------------------------------------------------------------------------------------
 // Tests HTTP header parsing, query extraction, middleware closure chaining, route dispatch, and response formatting.
 
 var log = typeof console !== "undefined" && console.log ? console.log : print;

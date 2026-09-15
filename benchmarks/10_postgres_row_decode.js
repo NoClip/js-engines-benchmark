@@ -1,5 +1,9 @@
 // Benchmark 10: PostgreSQL Binary Row Tuple Decoder
-// Inspired by Bun's "Querying Postgres (100 rows x 100 queries in flight)"
+// -------------------------------------------------------------------------------------
+// Adapted from the Bun Benchmark Suite (https://github.com/oven-sh/bun/tree/main/bench)
+// Originally designed & created by Jarred Sumner and the Oven team (oven-sh/bun).
+// Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
+// -------------------------------------------------------------------------------------
 // Tests binary wire protocol parsing: DataView big-endian integer decoding, column tuple extraction, and record projection.
 
 var log = typeof console !== "undefined" && console.log ? console.log : print;
