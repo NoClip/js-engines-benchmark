@@ -4,7 +4,7 @@
     {
       "id": "r8",
       "name": "R8 (Rust V8)",
-      "command": "d:/Work/r8/target/release/d8.exe",
+      "command": "d8",
       "args": ["{file}"],
       "enabled": "auto",
       "version_args": ["--version"],

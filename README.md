@@ -1,121 +1,158 @@
 # Multi-Engine JavaScript Benchmark Suite
 
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Standard%20Library%20Only-brightgreen.svg)]()
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
+
 An automated, high-precision performance benchmarking and mathematical checksum validation suite for JavaScript and WebAssembly runtimes.
 
-Built to compare **R8 (Rust V8)**, **Google V8 (TurboFan & Jitless)**, **Bun (JavaScriptCore)**, **Deno**, **QuickJS**, **SpiderMonkey**, and custom JavaScript engines with zero code modifications.
+Built to compare **R8 (Rust V8)**, **Google V8 (TurboFan Full JIT & Jitless)**, **Bun (JavaScriptCore)**, **Deno**, **QuickJS**, **SpiderMonkey**, and custom JavaScript engines with **zero code modifications**.
 
 ---
 
-## Key Features
+## 📑 Table of Contents
 
-- 🚀 **Dynamic Pluggability**: Add any new JavaScript engine in seconds by adding an entry to `engines.json`. No runner code changes required.
-- 🎯 **Mathematical Parity Verification**: Every benchmark computes a deterministic checksum. The runner automatically validates bit-for-bit equality across all engines to ensure correct semantics alongside raw execution speed.
-- 📊 **Statistical Rigor**: Configurable warmup passes (default: 2) and measurement passes (default: 5). Calculates Mean, Median, Min, Max, and Standard Deviation (StdDev).
-- 📈 **Interactive Visual Reports**: Generates an interactive, responsive HTML5 dashboard powered by Chart.js (`report.html`) featuring execution time comparisons, relative speedup multipliers, and category breakdowns.
-- 💾 **Machine-Readable Outputs**: Generates JSON exports (`results/latest.json`) and Markdown summaries (`results/summary.md`) for CI/CD pipelines.
-
----
-
-## Included Benchmarks
-
-| ID | Benchmark Name | Category | Workload Description |
-|:---|:---|:---|:---|
-| **01** | `01_arithmetic_loop` | Compute & JIT | 1,000,000 iterations of bitwise XOR, multiplications, and modulo arithmetic. |
-| **02** | `02_recursive_fibonacci` | Call Stack & Recursion | Deep call stack stress test via recursive `fib(28)` calculating 317,811. |
-| **03** | `03_object_shape_transitions` | Objects & Shapes | 30,000 object allocations, Hidden Class (Map) property transitions, and Inline Cache (IC) lookups. |
-| **04** | `04_typedarray_throughput` | Memory & TypedArrays | 50,000 Int32Array contiguous buffer allocations, indexed writes, and reduction passes. |
-| **05** | `05_array_dynamic_ops` | Arrays & Collections | 50,000 dynamic array push operations, buffer reallocations, and element traversals. |
-| **06** | `06_string_slicing_concat` | Strings & Slicing | 10,000 iterations of substring extractions, string concatenation, and buffer truncations. |
-| **07** | `07_crypto_hash` | Cryptography & Bitwise | 100,000 iterations of 32-bit FNV-1a cryptographic hashing and bitwise permutations. |
-| **08** | `08_prime_sieve` | Algorithms & Memory | Sieve of Eratosthenes calculating primes up to 150,000 using Uint8Array memory buffers. |
-
----
-
-## Latest Benchmark Results
-
-> Verified with 100% bit-for-bit mathematical checksum parity across all engines.
-
-| Benchmark | Workload | R8 (Rust V8) | Google V8 (TurboFan) | Google V8 (Jitless) | Parity Checksum | R8 vs TurboFan | Status |
-|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| `01_arithmetic_loop` | Compute & JIT | **4.98 ms** | 6.09 ms | 34.33 ms | `98930007` | **1.22x Faster ⚡** | **BEAT** ✅ |
-| `02_recursive_fibonacci` | Recursion | **2.07 ms** | 6.66 ms | 51.78 ms | `317811` | **3.22x Faster ⚡** | **BEAT** ✅ |
-| `03_object_shape_transitions` | Hidden Classes | **1.00 ms** | 2.46 ms | 8.89 ms | `49954909` | **2.46x Faster ⚡** | **BEAT** ✅ |
-| `04_typedarray_throughput` | TypedArrays | **1.17 ms** | 2.71 ms | 9.09 ms | `69504127` | **2.31x Faster ⚡** | **BEAT** ✅ |
-| `05_array_dynamic_ops` | Dynamic Arrays | **1.08 ms** | 3.47 ms | 47.28 ms | `91342198` | **3.23x Faster ⚡** | **BEAT** ✅ |
-| `06_string_slicing_concat` | Strings & Slicing | **1.00 ms** | 2.45 ms | 2.46 ms | `327380` | **2.45x Faster ⚡** | **BEAT** ✅ |
-| `07_crypto_hash` | Cryptography & Bitwise | **3.56 ms** | 7.85 ms | 44.22 ms | `62024169` | **2.21x Faster ⚡** | **BEAT** ✅ |
-| `08_prime_sieve` | Algorithms & Memory | **1.00 ms** | 7.45 ms | 18.48 ms | `86017384` | **7.45x Faster ⚡** | **BEAT** ✅ |
-| **Total Suite Time** | **All 8 Benchmarks** | **15.86 ms** | **39.14 ms** | **216.48 ms** | **100% Match** | **2.47x Faster Overall** | **8 / 8 WON** 🏆 |
+- [⚡ Quickstart](#-quickstart)
+- [📖 Complete Usage Guide](#-complete-usage-guide)
+  - [1. Basic Execution (All Engines & Benchmarks)](#1-basic-execution)
+  - [2. Filtering Specific Engines](#2-filtering-specific-engines)
+  - [3. Filtering Specific Benchmarks](#3-filtering-specific-benchmarks)
+  - [4. Custom Warmup & Measurement Iterations](#4-custom-warmup--measurement-iterations)
+  - [5. Headless / CI Mode & Custom Output Directory](#5-headless--ci-mode--custom-output-directory)
+  - [6. Viewing Reports & Outputs](#6-viewing-reports--outputs)
+  - [7. Complete CLI Reference Table](#7-complete-cli-reference-table)
+- [🛠️ Engine Installation Guide](#%EF%B8%8F-engine-installation-guide)
+  - [1. R8 (Rust V8)](#1-r8-rust-v8)
+  - [2. Google V8 (TurboFan & Jitless)](#2-google-v8-turbofan--jitless)
+  - [3. Bun (JavaScriptCore)](#3-bun-javascriptcore)
+  - [4. Deno (V8 Runtime)](#4-deno-v8-runtime)
+  - [5. QuickJS](#5-quickjs)
+  - [6. Universal Engine Installer (`jsvu`)](#6-universal-engine-installer-jsvu)
+- [📊 Included Benchmarks & Latest Results](#-included-benchmarks--latest-results)
+- [➕ Adding Custom Benchmarks](#-adding-custom-benchmarks)
+- [⚙️ Adding New Engines (`engines.json`)](#%EF%B8%8F-adding-new-engines-enginesjson)
+- [📄 License](#-license)
 
 ---
 
-## Quickstart & Usage
+## ⚡ Quickstart
 
 ### Prerequisites
-- Python 3.8+
-- Any JavaScript engine you wish to benchmark (see [Engine Installation Guide](#engine-installation-guide) below)
+- **Python 3.8+** (Zero external pip packages needed; uses Python standard library only).
+- At least one JavaScript engine installed or built (e.g. Node.js for Google V8, or R8).
 
-### 1. Run the Full Benchmark Suite
-Runs all benchmarks against all detected engines on your system:
+```bash
+# 1. Clone the benchmark suite
+git clone https://github.com/NoClip/js-engines-benchmark.git
+cd js-engines-benchmark
+
+# 2. Run the benchmarks (auto-detects all available engines on your machine)
+python runner.py
+```
+
+> **Note**: Any engine not installed on your system is automatically detected and skipped with a polite notice. You do **not** need to install every engine to use this tool!
+
+---
+
+## 📖 Complete Usage Guide
+
+### 1. Basic Execution
+Run all 8 benchmarks across all detected JavaScript engines on your system with default settings (2 warmups, 5 iterations):
 ```bash
 python runner.py
 ```
-> Engines that are not installed on your system are automatically detected and skipped without errors.
 
-### 2. Filter Specific Engines
-Compare only specific engines (e.g. R8 vs Google V8 TurboFan and Jitless):
+### 2. Filtering Specific Engines
+Use `--engines` to specify one or more engine IDs defined in `engines.json`:
 ```bash
+# Compare R8 against Google V8 TurboFan
+python runner.py --engines r8 v8_turbofan
+
+# Compare R8 against both Google V8 TurboFan and Google V8 Jitless
 python runner.py --engines r8 v8_turbofan v8_jitless
+
+# Compare all available engines including Bun and Deno
+python runner.py --engines r8 v8_turbofan bun deno quickjs
 ```
 
-### 3. Filter Specific Benchmarks
-Run a subset of benchmarks:
+### 3. Filtering Specific Benchmarks
+Use `--benchmarks` to specify one or more benchmark script names (stem or full filename):
 ```bash
-python runner.py --benchmarks 01_arithmetic_loop 02_recursive_fibonacci
+# Run only recursive fibonacci
+python runner.py --benchmarks 02_recursive_fibonacci
+
+# Run arithmetic loop and prime sieve
+python runner.py --benchmarks 01_arithmetic_loop 08_prime_sieve
 ```
 
-### 4. Custom Warmup and Measurement Passes
+### 4. Custom Warmup & Measurement Iterations
+Customize the statistical rigor using `--warmup` and `--iterations`:
 ```bash
-python runner.py --warmup 3 --iterations 10
+# Quick test (0 warmups, 1 measurement run)
+python runner.py --warmup 0 --iterations 1
+
+# High-precision statistical run (5 warmups, 20 measurement runs)
+python runner.py --warmup 5 --iterations 20
 ```
 
-### 5. View Interactive HTML Dashboard
-Open `report.html` in your web browser:
-- **Windows**: `start report.html`
-- **macOS**: `open report.html`
-- **Linux**: `xdg-open report.html`
+### 5. Headless / CI Mode & Custom Output Directory
+For automated testing in CI/CD pipelines:
+```bash
+# Skip HTML report generation and output results to custom folder
+python runner.py --no-html --output-dir ./ci-artifacts
+```
 
-The interactive report includes:
-- Side-by-side execution time comparisons (lower is better)
-- Relative speedup multipliers against baseline
-- Categorized performance radar/breakdowns
-- Full mathematical checksum validation logs
+### 6. Viewing Reports & Outputs
+After running the benchmark suite, the tool generates multiple report formats:
+
+1. **Terminal Summary Table**: Real-time mean execution time, standard deviation ($\pm\sigma$), speedup vs baseline, and checksum parity status (`PASS` / `FAIL`).
+2. **Interactive HTML5 Dashboard (`report.html`)**:
+   - Open in your browser:
+     - **Windows**: `start report.html`
+     - **macOS**: `open report.html`
+     - **Linux**: `xdg-open report.html`
+   - Features dynamic Bar Charts, Speedup Multipliers, and Category Breakdowns powered by Chart.js.
+3. **Machine-Readable JSON (`results/latest.json`)**: Full execution metadata, raw timing samples, median, min, max, stddev, and checksums for automated analysis.
+4. **Markdown Table (`results/summary.md`)**: GitHub-flavored markdown table ready for copy-pasting into pull requests or READMEs.
+
+### 7. Complete CLI Reference Table
+
+| Argument | Flag | Type | Default | Description |
+|:---|:---|:---:|:---:|:---|
+| Filter Engines | `--engines` | `str...` | *All detected* | Space-separated engine IDs to benchmark (`r8`, `v8_turbofan`, `v8_jitless`, `bun`, `deno`, `quickjs`). |
+| Filter Benchmarks | `--benchmarks` | `str...` | *All (01-08)* | Space-separated benchmark names (e.g. `01_arithmetic_loop 02_recursive_fibonacci`). |
+| Measurement Iterations | `--iterations` | `int` | `5` | Number of timed measurement runs per benchmark per engine. |
+| Warmup Passes | `--warmup` | `int` | `2` | Number of untimed warmup passes executed before measurement to prime JIT compilation and caches. |
+| Skip HTML Generation | `--no-html` | `flag` | `False` | Disables rendering the interactive `report.html` dashboard. |
+| Output Directory | `--output-dir` | `str` | `results` | Path to directory where JSON, Markdown, and HTML reports are written. |
+| Help | `-h`, `--help` | `flag` | - | Displays usage syntax, available flags, and exits. |
 
 ---
 
-## Engine Installation Guide
+## 🛠️ Engine Installation Guide
 
-The benchmark runner uses auto-discovery: you do **not** need to install every engine. Any missing engine is automatically skipped. Follow the instructions below to install the engines you want to benchmark.
+The benchmark runner auto-detects whichever engines are installed on your machine. Follow the instructions below for any engines you wish to include in your benchmark runs:
 
 ---
 
 ### 1. R8 (Rust V8)
 [R8](https://github.com/NoClip/r8) is Google V8 reimplemented in 100% Pure Safe Rust with zero C++ and zero external dependencies.
 
-#### Build Instructions:
+#### How to Build:
 ```bash
-# Clone the repository
+# Clone R8 repository next to js-engines-benchmark
 git clone https://github.com/NoClip/r8.git
 cd r8
 
 # Build the release binary
 cargo build --release
 ```
-- **Binary output**: `target/release/d8.exe` (Windows) or `target/release/d8` (Linux/macOS).
-- **Auto-detection**: The benchmark runner automatically looks for R8 in:
-  1. Sibling directory: `../r8/target/release/d8.exe` (or `d8`)
-  2. Sibling directory: `../Chromium-Rust/target/release/d8.exe` (or `d8`)
-  3. `R8_PATH` environment variable (e.g. `export R8_PATH=/path/to/d8`)
+- **Binary Output**: `target/release/d8.exe` (Windows) or `target/release/d8` (Linux/macOS).
+- **Auto-Discovery**: The benchmark runner automatically searches for R8 in:
+  1. Sibling directories: `../r8/target/release/d8` (or `.exe`)
+  2. Sibling directories: `../Chromium-Rust/target/release/d8` (or `.exe`)
+  3. Environment variable `R8_PATH` (e.g. `export R8_PATH=/path/to/d8`)
   4. System `PATH` (`d8`)
 
 ---
@@ -123,7 +160,7 @@ cargo build --release
 ### 2. Google V8 (TurboFan & Jitless)
 Google V8 can be benchmarked directly through Node.js (which embeds official Google V8) or as a standalone `d8` binary.
 
-#### Option A: Via Node.js (Recommended & Default)
+#### Via Node.js (Recommended):
 - **Windows**:
   ```powershell
   winget install OpenJS.NodeJS
@@ -139,9 +176,6 @@ Google V8 can be benchmarked directly through Node.js (which embeds official Goo
   sudo apt update && sudo apt install nodejs
   ```
 *Node.js enables benchmarking both **Google V8 TurboFan** (full JIT) and **Google V8 Jitless** (`node --jitless`) out of the box.*
-
-#### Option B: Standalone Google V8 Shell (`d8`)
-Install the official Google V8 standalone developer shell via `jsvu` (see Universal Tool section below).
 
 ---
 
@@ -186,7 +220,7 @@ Install the official Google V8 standalone developer shell via `jsvu` (see Univer
   ```powershell
   # Via MSYS2:
   pacman -S mingw-w64-x86_64-quickjs
-  # Or via Scoop:
+  # Or Scoop:
   scoop install quickjs
   ```
 - **macOS**:
@@ -203,8 +237,8 @@ Install the official Google V8 standalone developer shell via `jsvu` (see Univer
 
 ---
 
-### 6. Universal JS Engine Installer: `jsvu`
-[`jsvu`](https://github.com/GoogleChromeLabs/jsvu) (JavaScript Virtual Machine Universal installer) is an official Google tool that downloads precompiled standalone CLI binaries for nearly every JS engine:
+### 6. Universal Engine Installer: `jsvu`
+[`jsvu`](https://github.com/GoogleChromeLabs/jsvu) (JavaScript Virtual Machine Universal installer) is an official Google tool to install standalone CLI developer shells for all major JS engines:
 
 ```bash
 # 1. Install jsvu globally
@@ -219,15 +253,80 @@ Once installed, standalone engine binaries (`v8`, `jsc`, `sm`, `qjs`) can be ben
 
 ---
 
-## How to Add a New Engine
+## 📊 Included Benchmarks & Latest Results
 
-To add any other JavaScript engine (e.g. SpiderMonkey, Hermes, or an in-house VM), simply add an entry to `engines.json`:
+| ID | Benchmark Name | Category | Workload Description |
+|:---|:---|:---|:---|
+| **01** | `01_arithmetic_loop` | Compute & JIT | 1,000,000 iterations of bitwise XOR, multiplications, and modulo arithmetic. |
+| **02** | `02_recursive_fibonacci` | Call Stack & Recursion | Deep call stack stress test via recursive `fib(28)` calculating 317,811. |
+| **03** | `03_object_shape_transitions` | Objects & Shapes | 30,000 object allocations, Hidden Class (Map) property transitions, and Inline Cache (IC) lookups. |
+| **04** | `04_typedarray_throughput` | Memory & TypedArrays | 50,000 Int32Array contiguous buffer allocations, indexed writes, and reduction passes. |
+| **05** | `05_array_dynamic_ops` | Arrays & Collections | 50,000 dynamic array push operations, buffer reallocations, and element traversals. |
+| **06** | `06_string_slicing_concat` | Strings & Slicing | 10,000 iterations of substring extractions, string concatenation, and buffer truncations. |
+| **07** | `07_crypto_hash` | Cryptography & Bitwise | 100,000 iterations of 32-bit FNV-1a cryptographic hashing and bitwise permutations. |
+| **08** | `08_prime_sieve` | Algorithms & Memory | Sieve of Eratosthenes calculating primes up to 150,000 using Uint8Array memory buffers. |
+
+### Latest Head-to-Head Benchmark Results
+> Verified with 100% bit-for-bit mathematical checksum parity across all engines.
+
+| Benchmark | Workload | R8 (Rust V8) | Google V8 (TurboFan) | Google V8 (Jitless) | Parity Checksum | R8 vs TurboFan | Status |
+|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| `01_arithmetic_loop` | Compute & JIT | **4.98 ms** | 6.09 ms | 34.33 ms | `98930007` | **1.22x Faster ⚡** | **BEAT** ✅ |
+| `02_recursive_fibonacci` | Recursion | **2.07 ms** | 6.66 ms | 51.78 ms | `317811` | **3.22x Faster ⚡** | **BEAT** ✅ |
+| `03_object_shape_transitions` | Hidden Classes | **1.00 ms** | 2.46 ms | 8.89 ms | `49954909` | **2.46x Faster ⚡** | **BEAT** ✅ |
+| `04_typedarray_throughput` | TypedArrays | **1.17 ms** | 2.71 ms | 9.09 ms | `69504127` | **2.31x Faster ⚡** | **BEAT** ✅ |
+| `05_array_dynamic_ops` | Dynamic Arrays | **1.08 ms** | 3.47 ms | 47.28 ms | `91342198` | **3.23x Faster ⚡** | **BEAT** ✅ |
+| `06_string_slicing_concat` | Strings & Slicing | **1.00 ms** | 2.45 ms | 2.46 ms | `327380` | **2.45x Faster ⚡** | **BEAT** ✅ |
+| `07_crypto_hash` | Cryptography & Bitwise | **3.56 ms** | 7.85 ms | 44.22 ms | `62024169` | **2.21x Faster ⚡** | **BEAT** ✅ |
+| `08_prime_sieve` | Algorithms & Memory | **1.00 ms** | 7.45 ms | 18.48 ms | `86017384` | **7.45x Faster ⚡** | **BEAT** ✅ |
+| **Total Suite Time** | **All 8 Benchmarks** | **15.86 ms** | **39.14 ms** | **216.48 ms** | **100% Match** | **2.47x Faster Overall** | **8 / 8 WON** 🏆 |
+
+---
+
+## ➕ Adding Custom Benchmarks
+
+To add a new benchmark, place a `.js` file in the `benchmarks/` directory (e.g. `benchmarks/09_my_custom_workload.js`).
+
+Each script must output a single line prefixed with `BENCHMARK_OUTPUT:` containing a JSON payload:
+
+```javascript
+// Cross-engine console/print and high-resolution timer
+var log = typeof console !== "undefined" && console.log ? console.log : print;
+var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
+
+var start = now();
+
+// --- Execute Your Workload Here ---
+var checksum = 0;
+for (var i = 0; i < 500000; i++) {
+    checksum = (checksum + (i ^ 42)) | 0;
+}
+
+var end = now();
+var duration = Math.max(1, end - start);
+
+// Print standardized JSON output
+log("BENCHMARK_OUTPUT:" + JSON.stringify({
+    name: "09_my_custom_workload",
+    category: "Compute & JIT",
+    duration_ms: duration,
+    checksum: checksum
+}));
+```
+
+The runner will automatically discover the file on its next execution!
+
+---
+
+## ⚙️ Adding New Engines (`engines.json`)
+
+To benchmark any other JavaScript runtime (e.g. SpiderMonkey, Hermes, or an experimental engine), simply add an entry to [`engines.json`](engines.json):
 
 ```json
 {
   "id": "spidermonkey",
   "name": "Mozilla SpiderMonkey",
-  "command": "js",
+  "command": "sm",
   "args": ["-f", "{file}"],
   "enabled": "auto",
   "version_args": ["--version"],
@@ -236,36 +335,12 @@ To add any other JavaScript engine (e.g. SpiderMonkey, Hermes, or an in-house VM
 }
 ```
 
-The benchmark runner will:
-1. Automatically probe the binary's presence on your system.
-2. Substitute `{file}` with each benchmark script path.
-3. Parse the standardized output protocol and compare performance and checksums against all other engines.
+- `command`: Binary executable name (on `PATH`) or relative/absolute path.
+- `args`: Command-line arguments. `{file}` is automatically substituted with the path to the benchmark script.
+- `enabled`: `"auto"` (probes system for presence), `true` (always run), or `false` (disabled).
 
 ---
 
-## Benchmark Script Protocol
-
-All benchmark scripts are standalone `.js` files located in `benchmarks/`. Each script prints a single line starting with `BENCHMARK_OUTPUT:` containing a JSON payload:
-
-```javascript
-var log = typeof console !== "undefined" && console.log ? console.log : print;
-var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
-
-var start = now();
-// ... execute workload ...
-var end = now();
-var duration = Math.max(1, end - start);
-
-log("BENCHMARK_OUTPUT:" + JSON.stringify({
-    name: "my_benchmark_name",
-    category: "My Category",
-    duration_ms: duration,
-    checksum: computedChecksum
-}));
-```
-
----
-
-## License
+## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
