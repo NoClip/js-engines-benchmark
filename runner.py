@@ -35,15 +35,48 @@ def check_engine_availability(engine):
     cmd_raw = engine.get("command", "")
     cmd_path = Path(cmd_raw)
 
-    # Check if direct executable path exists
+    # 1. Check if direct executable path exists
     if cmd_path.exists() and cmd_path.is_file():
         return True
 
-    # Check if executable on PATH
-    if shutil.which(cmd_raw):
+    # 2. Check if relative to BASE_DIR
+    rel_path = (BASE_DIR / cmd_raw).resolve()
+    if rel_path.exists() and rel_path.is_file():
+        engine["command"] = str(rel_path)
         return True
 
-    # Check version args test
+    # 3. For R8, search common relative sibling directories and environment variables
+    if engine.get("id") == "r8":
+        r8_env = os.environ.get("R8_PATH") or os.environ.get("R8_BIN")
+        if r8_env and Path(r8_env).is_file():
+            engine["command"] = str(Path(r8_env).resolve())
+            return True
+
+        candidates = [
+            BASE_DIR.parent / "r8" / "target" / "release" / "d8.exe",
+            BASE_DIR.parent / "r8" / "target" / "release" / "d8",
+            BASE_DIR.parent / "Chromium-Rust" / "target" / "release" / "d8.exe",
+            BASE_DIR.parent / "Chromium-Rust" / "target" / "release" / "d8",
+            BASE_DIR / "bin" / "d8.exe",
+            BASE_DIR / "bin" / "d8",
+        ]
+        for cand in candidates:
+            if cand.exists() and cand.is_file():
+                engine["command"] = str(cand.resolve())
+                return True
+
+    # 4. Check if executable is available on system PATH
+    found = shutil.which(cmd_raw)
+    if found:
+        return True
+
+    if engine.get("id") == "r8":
+        found_d8 = shutil.which("d8") or shutil.which("r8")
+        if found_d8:
+            engine["command"] = found_d8
+            return True
+
+    # 5. Check version args test
     version_args = engine.get("version_args", [])
     if version_args:
         try:
