@@ -65,6 +65,12 @@ def check_engine_availability(engine):
                 engine["command"] = str(cand.resolve())
                 return True
 
+    if engine.get("id") == "bun":
+        bun_home = Path.home() / ".bun" / "bin" / ("bun.exe" if os.name == "nt" else "bun")
+        if bun_home.exists() and bun_home.is_file():
+            engine["command"] = str(bun_home.resolve())
+            return True
+
     # 4. Check if executable is available on system PATH
     found = shutil.which(cmd_raw)
     if found:
