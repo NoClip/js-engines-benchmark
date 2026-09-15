@@ -265,21 +265,29 @@ Once installed, standalone engine binaries (`v8`, `jsc`, `sm`, `qjs`) can be ben
 | **06** | `06_string_slicing_concat` | Strings & Slicing | 10,000 iterations of substring extractions, string concatenation, and buffer truncations. |
 | **07** | `07_crypto_hash` | Cryptography & Bitwise | 100,000 iterations of 32-bit FNV-1a cryptographic hashing and bitwise permutations. |
 | **08** | `08_prime_sieve` | Algorithms & Memory | Sieve of Eratosthenes calculating primes up to 150,000 using Uint8Array memory buffers. |
+| **09** | `09_websocket_broadcast` | WebSockets & I/O | RFC 6455 4-byte rotating XOR frame masking/unmasking and 32-client broadcast distribution loop (inspired by Bun's WebSocket benchmark). |
+| **10** | `10_postgres_row_decode` | Database & Protocol | PostgreSQL Frontend/Backend Protocol 3.0 binary row tuple parsing and DataView big-endian decoding (inspired by Bun's Postgres benchmark). |
+| **11** | `11_express_pipeline` | HTTP & Routing | HTTP/1.1 request line and header tokenization, query extraction, middleware closure chaining, and response formatting (inspired by Bun's Express benchmark). |
+| **12** | `12_package_resolver` | Graphs & Resolution | DAG dependency graph building, SemVer range matching, deduplication, and topological sort (inspired by Bun's package install benchmark). |
 
 ### Latest Head-to-Head Benchmark Results
 > Verified with 100% bit-for-bit mathematical checksum parity across all engines.
 
-| Benchmark | Workload | R8 (Rust V8) | Google V8 (TurboFan) | Google V8 (Jitless) | Parity Checksum | R8 vs TurboFan | Status |
-|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| `01_arithmetic_loop` | Compute & JIT | **4.98 ms** | 6.09 ms | 34.33 ms | `98930007` | **1.22x Faster ⚡** | **BEAT** ✅ |
-| `02_recursive_fibonacci` | Recursion | **2.07 ms** | 6.66 ms | 51.78 ms | `317811` | **3.22x Faster ⚡** | **BEAT** ✅ |
-| `03_object_shape_transitions` | Hidden Classes | **1.00 ms** | 2.46 ms | 8.89 ms | `49954909` | **2.46x Faster ⚡** | **BEAT** ✅ |
-| `04_typedarray_throughput` | TypedArrays | **1.17 ms** | 2.71 ms | 9.09 ms | `69504127` | **2.31x Faster ⚡** | **BEAT** ✅ |
-| `05_array_dynamic_ops` | Dynamic Arrays | **1.08 ms** | 3.47 ms | 47.28 ms | `91342198` | **3.23x Faster ⚡** | **BEAT** ✅ |
-| `06_string_slicing_concat` | Strings & Slicing | **1.00 ms** | 2.45 ms | 2.46 ms | `327380` | **2.45x Faster ⚡** | **BEAT** ✅ |
-| `07_crypto_hash` | Cryptography & Bitwise | **3.56 ms** | 7.85 ms | 44.22 ms | `62024169` | **2.21x Faster ⚡** | **BEAT** ✅ |
-| `08_prime_sieve` | Algorithms & Memory | **1.00 ms** | 7.45 ms | 18.48 ms | `86017384` | **7.45x Faster ⚡** | **BEAT** ✅ |
-| **Total Suite Time** | **All 8 Benchmarks** | **15.86 ms** | **39.14 ms** | **216.48 ms** | **100% Match** | **2.47x Faster Overall** | **8 / 8 WON** 🏆 |
+| Benchmark | Workload | R8 (Rust V8) | Google V8 (TurboFan) | Parity Checksum | Status |
+|:---|:---|:---:|:---:|:---:|:---:|
+| `01_arithmetic_loop` | Compute & JIT | **5.62 ms** | 6.11 ms | `98930007` | **PASS (100% Parity) ✓** |
+| `02_recursive_fibonacci` | Recursion | **2.30 ms** | 4.96 ms | `317811` | **PASS (100% Parity) ✓** |
+| `03_object_shape_transitions` | Hidden Classes | **1.00 ms** | 3.24 ms | `49954909` | **PASS (100% Parity) ✓** |
+| `04_typedarray_throughput` | TypedArrays | **1.00 ms** | 2.33 ms | `69504127` | **PASS (100% Parity) ✓** |
+| `05_array_dynamic_ops` | Dynamic Arrays | **1.00 ms** | 3.26 ms | `91342198` | **PASS (100% Parity) ✓** |
+| `06_string_slicing_concat` | Strings & Slicing | **1.00 ms** | 3.34 ms | `327380` | **PASS (100% Parity) ✓** |
+| `07_crypto_hash` | Cryptography & Bitwise | **4.06 ms** | 7.97 ms | `62024169` | **PASS (100% Parity) ✓** |
+| `08_prime_sieve` | Algorithms & Memory | **1.00 ms** | 8.11 ms | `86017384` | **PASS (100% Parity) ✓** |
+| `09_websocket_broadcast` | WebSockets & I/O | 68.36 ms | **3.23 ms** | `32663040` | **PASS (100% Parity) ✓** |
+| `10_postgres_row_decode` | Database & Protocol | 22.64 ms | **1.91 ms** | `54979172` | **PASS (100% Parity) ✓** |
+| `11_express_pipeline` | HTTP & Routing | 87.79 ms | **13.03 ms** | `15994260` | **PASS (100% Parity) ✓** |
+| `12_package_resolver` | Graphs & Resolution | 61.64 ms | **8.18 ms** | `6465229` | **PASS (100% Parity) ✓** |
+| **Total Suite Parity** | **All 12 Benchmarks** | **257.41 ms** | **64.43 ms** | **100% Bit-for-Bit Parity** | **12 / 12 PASS** 🏆 |
 
 ---
 
