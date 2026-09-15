@@ -7,15 +7,15 @@ var now = typeof performance !== "undefined" && performance.now ? function() { r
 var LIMIT = 150000;
 var MOD = 100000007;
 
-function runPrimeSieve() {
-    var isPrime = new Uint8Array(LIMIT + 1);
-    for (var i = 2; i <= LIMIT; i = i + 1) {
+function runPrimeSieve(limit, mod) {
+    var isPrime = new Uint8Array(limit + 1);
+    for (var i = 2; i <= limit; i = i + 1) {
         isPrime[i] = 1;
     }
 
-    for (var p = 2; p * p <= LIMIT; p = p + 1) {
+    for (var p = 2; p * p <= limit; p = p + 1) {
         if (isPrime[p] === 1) {
-            for (var mult = p * p; mult <= LIMIT; mult = mult + p) {
+            for (var mult = p * p; mult <= limit; mult = mult + p) {
                 isPrime[mult] = 0;
             }
         }
@@ -23,17 +23,17 @@ function runPrimeSieve() {
 
     var count = 0;
     var primeSum = 0;
-    for (var j = 2; j <= LIMIT; j = j + 1) {
+    for (var j = 2; j <= limit; j = j + 1) {
         if (isPrime[j] === 1) {
             count = count + 1;
-            primeSum = (primeSum + j) % MOD;
+            primeSum = (primeSum + j) % mod;
         }
     }
     return primeSum;
 }
 
 var start = now();
-var primeSum = runPrimeSieve();
+var primeSum = runPrimeSieve(LIMIT, MOD);
 var end = now();
 var duration = Math.max(1, end - start);
 

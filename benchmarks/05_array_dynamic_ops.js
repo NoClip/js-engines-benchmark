@@ -7,21 +7,21 @@ var now = typeof performance !== "undefined" && performance.now ? function() { r
 var COUNT = 50000;
 var MOD = 100000007;
 
-function runArrayOps() {
+function runArrayOps(count, mod) {
     var arr = [];
-    for (var i = 0; i < COUNT; i = i + 1) {
+    for (var i = 0; i < count; i = i + 1) {
         arr.push((i * 3 + 1) & 0xffff);
     }
 
     var sum = 0;
     for (var j = 0; j < arr.length; j = j + 1) {
-        sum = (sum + arr[j]) % MOD;
+        sum = (sum + arr[j]) % mod;
     }
     return sum;
 }
 
 var start = now();
-var sum = runArrayOps();
+var sum = runArrayOps(COUNT, MOD);
 var end = now();
 var duration = Math.max(1, end - start);
 

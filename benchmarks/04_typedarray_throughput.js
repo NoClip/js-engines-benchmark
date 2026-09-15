@@ -7,21 +7,21 @@ var now = typeof performance !== "undefined" && performance.now ? function() { r
 var SIZE = 50000;
 var MOD = 100000007;
 
-function runTypedArray() {
-    var ta = new Int32Array(SIZE);
-    for (var i = 0; i < SIZE; i = i + 1) {
+function runTypedArray(size, mod) {
+    var ta = new Int32Array(size);
+    for (var i = 0; i < size; i = i + 1) {
         ta[i] = (i * 7) & 0xffff;
     }
 
     var sum = 0;
-    for (var j = 0; j < SIZE; j = j + 1) {
-        sum = (sum + ta[j]) % MOD;
+    for (var j = 0; j < size; j = j + 1) {
+        sum = (sum + ta[j]) % mod;
     }
     return sum;
 }
 
 var start = now();
-var sum = runTypedArray();
+var sum = runTypedArray(SIZE, MOD);
 var end = now();
 var duration = Math.max(1, end - start);
 
