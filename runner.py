@@ -53,10 +53,16 @@ def check_engine_availability(engine):
             return True
 
         candidates = [
+            BASE_DIR.parent / "r8" / "target" / "release" / "r8.exe",
+            BASE_DIR.parent / "r8" / "target" / "release" / "r8",
+            BASE_DIR.parent / "Chromium-Rust" / "target" / "release" / "r8.exe",
+            BASE_DIR.parent / "Chromium-Rust" / "target" / "release" / "r8",
             BASE_DIR.parent / "r8" / "target" / "release" / "d8.exe",
             BASE_DIR.parent / "r8" / "target" / "release" / "d8",
             BASE_DIR.parent / "Chromium-Rust" / "target" / "release" / "d8.exe",
             BASE_DIR.parent / "Chromium-Rust" / "target" / "release" / "d8",
+            BASE_DIR / "bin" / "r8.exe",
+            BASE_DIR / "bin" / "r8",
             BASE_DIR / "bin" / "d8.exe",
             BASE_DIR / "bin" / "d8",
         ]

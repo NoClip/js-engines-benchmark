@@ -4,7 +4,7 @@
     {
       "id": "r8",
       "name": "R8 (Rust V8)",
-      "command": "d8",
+      "command": "r8",
       "args": ["{file}"],
       "enabled": "auto",
       "version_args": ["--version"],
