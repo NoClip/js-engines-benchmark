@@ -41,30 +41,62 @@ Built to compare **R8 (Rust V8)**, **Google V8 (TurboFan Full JIT & Jitless)**, 
 
 ### Prerequisites
 - **Python 3.8+** (Zero external pip packages needed; uses Python standard library only).
-- At least one JavaScript engine installed or built (e.g. Node.js for Google V8, or R8).
 
 ```bash
 # 1. Clone the benchmark suite
 git clone https://github.com/NoClip/js-engines-benchmark.git
 cd js-engines-benchmark
 
-# 2. Run the benchmarks (auto-detects all available engines on your machine)
+# 2. Run with zero-setup auto-install (automatically provisions R8, Bun, Deno, QuickJS)
+python runner.py --auto-install
+
+# Or run with existing system-installed engines
 python runner.py
 ```
 
-> **Note**: Any engine not installed on your system is automatically detected and skipped with a polite notice. You do **not** need to install every engine to use this tool!
+> **Zero-Permission Portable Installs**: Running `--auto-install` downloads and builds portable binaries locally into `.engines/`. No root, sudo, or administrator privileges are ever required!
 
 ---
 
 ## 📖 Complete Usage Guide
 
 ### 1. Basic Execution
-Run all 8 benchmarks across all detected JavaScript engines on your system with default settings (2 warmups, 5 iterations):
+Run all 8 benchmarks across all detected JavaScript engines and runtimes on your system with default settings (2 warmups, 5 iterations):
 ```bash
 python runner.py
 ```
 
-### 2. Filtering Specific Engines
+### 2. Pure Engines vs. Runtimes Filtering (`--type`)
+Distinguish between pure JavaScript Virtual Machines and full application runtimes:
+```bash
+# Benchmark ONLY pure JavaScript Engines (R8, QuickJS, Standalone V8 d8, JSC)
+python runner.py --type engines
+
+# Benchmark ONLY JavaScript Runtimes (Bun, Node.js, Deno)
+python runner.py --type runtimes
+
+# Benchmark both engines and runtimes (Default)
+python runner.py --type all
+```
+
+> **Taxonomy Note**:
+> - **JS Engine (VM)**: Pure execution engine that compiles and runs JavaScript bytecode/machine code without I/O runtimes (e.g. **R8 (Rust V8)**, **Google V8 Standalone (`d8`)**, **QuickJS (`qjs`)**, **JavaScriptCore (`jsc`)**). **R8 is strictly an Engine, not a runtime.**
+> - **JS Runtime**: Application environment bundling a JS engine with event loop, OS I/O, and Web APIs (e.g. **Bun** = WebKit JSC + Zig, **Node.js** = Google V8 + libuv, **Deno** = Google V8 + Tokio).
+
+### 3. Automated Zero-Permission Engine Installer (`--auto-install` & `--install`)
+Never worry about manually downloading or setting up engines. The built-in provisioner downloads and builds engines locally into a portable `.engines/` directory with zero root/admin requirements:
+```bash
+# Automatically install any missing engines/runtimes before benchmarking
+python runner.py --auto-install
+
+# Pre-install specific engines on demand
+python runner.py --install bun quickjs deno r8
+
+# Pre-install all supported engines in one command
+python runner.py --install all
+```
+
+### 4. Filtering Specific Engines
 Use `--engines` to specify one or more engine IDs defined in `engines.json`:
 ```bash
 # Compare R8 against Google V8 TurboFan
@@ -77,7 +109,7 @@ python runner.py --engines r8 v8_turbofan v8_jitless
 python runner.py --engines r8 v8_turbofan bun deno quickjs
 ```
 
-### 3. Filtering Specific Benchmarks
+### 5. Filtering Specific Benchmarks
 Use `--benchmarks` to specify one or more benchmark script names (stem or full filename):
 ```bash
 # Run only recursive fibonacci
@@ -87,7 +119,7 @@ python runner.py --benchmarks 02_recursive_fibonacci
 python runner.py --benchmarks 01_arithmetic_loop 08_prime_sieve
 ```
 
-### 4. Custom Warmup & Measurement Iterations
+### 6. Custom Warmup & Measurement Iterations
 Customize the statistical rigor using `--warmup` and `--iterations`:
 ```bash
 # Quick test (0 warmups, 1 measurement run)
@@ -97,30 +129,33 @@ python runner.py --warmup 0 --iterations 1
 python runner.py --warmup 5 --iterations 20
 ```
 
-### 5. Headless / CI Mode & Custom Output Directory
+### 7. Headless / CI Mode & Custom Output Directory
 For automated testing in CI/CD pipelines:
 ```bash
 # Skip HTML report generation and output results to custom folder
 python runner.py --no-html --output-dir ./ci-artifacts
 ```
 
-### 6. Viewing Reports & Outputs
+### 8. Viewing Reports & Outputs
 After running the benchmark suite, the tool generates multiple report formats:
 
-1. **Terminal Summary Table**: Real-time mean execution time, standard deviation ($\pm\sigma$), speedup vs baseline, and checksum parity status (`PASS` / `FAIL`).
+1. **Terminal Summary Table**: Real-time mean execution time, target type (Engine vs Runtime), VM backend, standard deviation ($\pm\sigma$), speedup vs baseline, and checksum parity status (`PASS` / `FAIL`).
 2. **Interactive HTML5 Dashboard (`report.html`)**:
    - Open in your browser:
      - **Windows**: `start report.html`
      - **macOS**: `open report.html`
      - **Linux**: `xdg-open report.html`
-   - Features dynamic Bar Charts, Speedup Multipliers, and Category Breakdowns powered by Chart.js.
-3. **Machine-Readable JSON (`results/latest.json`)**: Full execution metadata, raw timing samples, median, min, max, stddev, and checksums for automated analysis.
-4. **Markdown Table (`results/summary.md`)**: GitHub-flavored markdown table ready for copy-pasting into pull requests or READMEs.
+   - Features dynamic Bar Charts, Speedup Multipliers, Engine vs. Runtime Badges, and Category Breakdowns powered by Chart.js.
+3. **Machine-Readable JSON (`results/latest.json`)**: Full execution metadata, engine type, engine backend, raw timing samples, median, min, max, stddev, and checksums for automated analysis.
+4. **Markdown Table (`results/summary.md`)**: GitHub-flavored markdown table with target type badges ready for copy-pasting into pull requests or READMEs.
 
-### 7. Complete CLI Reference Table
+### 9. Complete CLI Reference Table
 
 | Argument | Flag | Type | Default | Description |
 |:---|:---|:---:|:---:|:---|
+| Target Type | `--type` | `str` | `all` | Filter execution target: `engines` (pure VMs: R8, d8, QuickJS, JSC), `runtimes` (Bun, Node, Deno), or `all`. |
+| Auto-Install | `--auto-install` | `flag` | `False` | Automatically download and provision missing engines into local `.engines/`. |
+| Manual Install | `--install` | `str...` | `None` | Pre-install specified engines (e.g. `--install bun r8 quickjs` or `--install all`) and exit. |
 | Filter Engines | `--engines` | `str...` | *All detected* | Space-separated engine IDs to benchmark (`r8`, `v8_turbofan`, `v8_jitless`, `bun`, `deno`, `quickjs`). |
 | Filter Benchmarks | `--benchmarks` | `str...` | *All (01-08)* | Space-separated benchmark names (e.g. `01_arithmetic_loop 02_recursive_fibonacci`). |
 | Measurement Iterations | `--iterations` | `int` | `5` | Number of timed measurement runs per benchmark per engine. |

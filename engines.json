@@ -1,29 +1,110 @@
 {
-  "$schema": "./engines.schema.json",
   "engines": [
     {
       "id": "r8",
       "name": "R8 (Rust V8)",
+      "type": "engine",
+      "engine_backend": "Rust V8",
       "command": "r8",
       "args": ["{file}"],
       "enabled": "auto",
       "version_args": ["--version"],
       "description": "Google V8 Engine 100% reimplemented in Pure Safe Rust (Zero C++, Zero Dependencies)",
-      "color": "#e06c75"
+      "color": "#e06c75",
+      "install": {
+        "strategy": "r8_source_or_release",
+        "github_repo": "NoClip/r8",
+        "binary_name": {
+          "windows": "r8.exe",
+          "linux": "r8",
+          "darwin": "r8"
+        },
+        "downloads": {
+          "windows_x64": "https://github.com/NoClip/r8/releases/latest/download/r8-windows-x64.zip",
+          "linux_x64": "https://github.com/NoClip/r8/releases/latest/download/r8-linux-x64.tar.gz",
+          "darwin_arm64": "https://github.com/NoClip/r8/releases/latest/download/r8-macos-arm64.tar.gz"
+        }
+      }
+    },
+    {
+      "id": "v8_standalone",
+      "name": "Google V8 Standalone (d8)",
+      "type": "engine",
+      "engine_backend": "Google V8 C++",
+      "command": "d8",
+      "args": ["{file}"],
+      "enabled": "auto",
+      "version_args": ["--version"],
+      "description": "Official Google V8 C++ Developer Shell (Standalone d8)",
+      "color": "#4fa8eb",
+      "install": {
+        "strategy": "v8_archive",
+        "binary_name": {
+          "windows": "d8.exe",
+          "linux": "d8",
+          "darwin": "d8"
+        },
+        "downloads": {
+          "windows_x64": "https://storage.googleapis.com/chromium-v8/official/canary/v8-win64-rel-latest.zip",
+          "linux_x64": "https://storage.googleapis.com/chromium-v8/official/canary/v8-linux64-rel-latest.zip",
+          "darwin_arm64": "https://storage.googleapis.com/chromium-v8/official/canary/v8-mac-arm64-rel-latest.zip"
+        }
+      }
+    },
+    {
+      "id": "quickjs",
+      "name": "QuickJS",
+      "type": "engine",
+      "engine_backend": "QuickJS C",
+      "command": "qjs",
+      "args": ["{file}"],
+      "enabled": "auto",
+      "version_args": ["-h"],
+      "description": "Fabrice Bellard's ultra-lightweight C JavaScript engine",
+      "color": "#c678dd",
+      "install": {
+        "strategy": "direct_binary",
+        "binary_name": {
+          "windows": "qjs.exe",
+          "linux": "qjs",
+          "darwin": "qjs"
+        },
+        "downloads": {
+          "windows_x64": "https://github.com/quickjs-ng/quickjs/releases/latest/download/qjs-windows-x86_64.exe",
+          "linux_x64": "https://github.com/quickjs-ng/quickjs/releases/latest/download/qjs-linux-x86_64",
+          "darwin_arm64": "https://github.com/quickjs-ng/quickjs/releases/latest/download/qjs-darwin-arm64"
+        }
+      }
+    },
+    {
+      "id": "javascriptcore",
+      "name": "Apple JavaScriptCore (jsc)",
+      "type": "engine",
+      "engine_backend": "WebKit JavaScriptCore",
+      "command": "jsc",
+      "args": ["{file}"],
+      "enabled": "auto",
+      "version_args": ["-e", "print(1)"],
+      "description": "Apple WebKit standalone JavaScriptCore (JSC) VM shell",
+      "color": "#a074c4"
     },
     {
       "id": "v8_turbofan",
-      "name": "Google V8 (TurboFan Full JIT)",
+      "name": "Google V8 (Node / TurboFan JIT)",
+      "type": "runtime",
+      "engine_backend": "Google V8 C++",
       "command": "node",
       "args": ["{file}"],
       "enabled": "auto",
       "version_args": ["-v"],
-      "description": "Official Google V8 C++ Engine with full TurboFan optimizing machine code JIT",
+      "description": "Official Google V8 C++ Engine embedded in Node.js with full TurboFan optimizing JIT",
       "color": "#61afef"
     },
     {
       "id": "v8_jitless",
-      "name": "Google V8 (Jitless Interpreter)",
+      "name": "Google V8 (Node / Jitless Interpreter)",
+      "type": "runtime",
+      "engine_backend": "Google V8 C++",
       "command": "node",
       "args": ["--jitless", "{file}"],
       "enabled": "auto",
@@ -34,32 +115,54 @@
     {
       "id": "bun",
       "name": "Bun (JavaScriptCore)",
+      "type": "runtime",
+      "engine_backend": "WebKit JavaScriptCore",
       "command": "bun",
       "args": ["run", "{file}"],
       "enabled": "auto",
       "version_args": ["--version"],
       "description": "WebKit JavaScriptCore runtime packaged via Bun",
-      "color": "#f5a742"
+      "color": "#f5a742",
+      "install": {
+        "strategy": "archive",
+        "github_repo": "oven-sh/bun",
+        "binary_name": {
+          "windows": "bun.exe",
+          "linux": "bun",
+          "darwin": "bun"
+        },
+        "downloads": {
+          "windows_x64": "https://github.com/oven-sh/bun/releases/latest/download/bun-windows-x64.zip",
+          "linux_x64": "https://github.com/oven-sh/bun/releases/latest/download/bun-linux-x64.zip",
+          "darwin_arm64": "https://github.com/oven-sh/bun/releases/latest/download/bun-darwin-aarch64.zip"
+        }
+      }
     },
     {
       "id": "deno",
       "name": "Deno (V8 Runtime)",
+      "type": "runtime",
+      "engine_backend": "Google V8 C++",
       "command": "deno",
       "args": ["run", "{file}"],
       "enabled": "auto",
       "version_args": ["--version"],
       "description": "Deno TypeScript/JavaScript runtime powered by Google V8",
-      "color": "#98c379"
-    },
-    {
-      "id": "quickjs",
-      "name": "QuickJS",
-      "command": "qjs",
-      "args": ["{file}"],
-      "enabled": "auto",
-      "version_args": ["-h"],
-      "description": "Fabrice Bellard's lightweight C JavaScript engine",
-      "color": "#c678dd"
+      "color": "#98c379",
+      "install": {
+        "strategy": "archive",
+        "github_repo": "denoland/deno",
+        "binary_name": {
+          "windows": "deno.exe",
+          "linux": "deno",
+          "darwin": "deno"
+        },
+        "downloads": {
+          "windows_x64": "https://github.com/denoland/deno/releases/latest/download/deno-x86_64-pc-windows-msvc.zip",
+          "linux_x64": "https://github.com/denoland/deno/releases/latest/download/deno-x86_64-unknown-linux-gnu.zip",
+          "darwin_arm64": "https://github.com/denoland/deno/releases/latest/download/deno-aarch64-apple-darwin.zip"
+        }
+      }
     }
   ]
 }

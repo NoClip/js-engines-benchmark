@@ -298,11 +298,13 @@
                     <tr>
                         <th>Benchmark</th>
                         <th>Category</th>
-                        <th>Engine</th>
+                        <th>Target</th>
+                        <th>Type</th>
+                        <th>VM Backend</th>
                         <th>Mean (ms)</th>
                         <th>Median (ms)</th>
                         <th>StdDev</th>
-                        <th>Relative vs V8</th>
+                        <th>Relative vs Baseline</th>
                         <th>Checksum Status</th>
                     </tr>
                 </thead>
@@ -359,7 +361,9 @@
             engines.forEach(e => {
                 const item = document.createElement("div");
                 item.className = "legend-item";
-                item.innerHTML = `<span class="legend-dot" style="background: ${e.color || '#58a6ff'}"></span><strong>${e.name}</strong> (${e.id})`;
+                const typeTag = (e.type || "engine").toUpperCase();
+                const backendTag = e.engine_backend || "VM";
+                item.innerHTML = `<span class="legend-dot" style="background: ${e.color || '#58a6ff'}"></span><strong>${e.name}</strong> <span style="font-size: 0.75rem; opacity: 0.8;">[${typeTag}: ${backendTag}]</span>`;
                 legendContainer.appendChild(item);
             });
 
@@ -384,10 +388,16 @@
                         ? `<span class="badge badge-pass">VALID (${r.checksum})</span>`
                         : `<span class="badge badge-fail">MISMATCH</span>`;
 
+                    const typeBadge = e.type === "engine"
+                        ? `<span class="badge" style="background: rgba(224, 108, 117, 0.2); color: #e06c75; border: 1px solid rgba(224, 108, 117, 0.4);">ENGINE</span>`
+                        : `<span class="badge" style="background: rgba(97, 175, 239, 0.2); color: #61afef; border: 1px solid rgba(97, 175, 239, 0.4);">RUNTIME</span>`;
+
                     tr.innerHTML = `
                         <td><strong>${b.name}</strong></td>
                         <td>${b.category}</td>
                         <td><span style="color: ${e.color}">${e.name}</span></td>
+                        <td>${typeBadge}</td>
+                        <td><small style="color: var(--text-secondary)">${e.engine_backend || 'VM'}</small></td>
                         <td><strong>${r.mean.toFixed(2)}</strong></td>
                         <td>${r.median.toFixed(2)}</td>
                         <td>±${r.std_dev.toFixed(2)}</td>

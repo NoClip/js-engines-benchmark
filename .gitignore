@@ -9,6 +9,8 @@ results/*.json
 !results/.gitkeep
 results/*.md
 report.html
+.engines/
+.cache/
 
 # Virtual environments
 venv/

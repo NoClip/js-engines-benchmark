@@ -13,6 +13,13 @@ import argparse
 import subprocess
 import statistics
 from pathlib import Path
+from installer import get_installed_path, install_engine
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 
 BASE_DIR = Path(__file__).parent.resolve()
 BENCHMARKS_DIR = BASE_DIR / "benchmarks"
@@ -31,11 +38,24 @@ def load_engine_registry():
         data = json.load(f)
     return data.get("engines", [])
 
-def check_engine_availability(engine):
+def check_engine_availability(engine, auto_install=False):
+    # 0. Check if engine is already provisioned in local .engines/<id>/
+    installed = get_installed_path(engine)
+    if installed and installed.is_file():
+        engine["command"] = str(installed)
+        return True
+
+    # 1. If auto_install requested and engine has install metadata, provision it now
+    if auto_install and engine.get("install"):
+        newly_installed = install_engine(engine)
+        if newly_installed and newly_installed.is_file():
+            engine["command"] = str(newly_installed)
+            return True
+
     cmd_raw = engine.get("command", "")
     cmd_path = Path(cmd_raw)
 
-    # 1. Check if direct executable path exists
+    # 2. Check if direct executable path exists
     if cmd_path.exists() and cmd_path.is_file():
         return True
 
@@ -199,27 +219,68 @@ def print_header(title):
 
 def main():
     parser = argparse.ArgumentParser(description="Multi-Engine JavaScript Benchmark Runner")
-    parser.add_argument("--engines", nargs="+", help="Filter engines by ID (e.g. r8 v8_turbofan)")
+    parser.add_argument("--engines", nargs="+", help="Filter engines by ID (e.g. r8 v8_turbofan bun)")
+    parser.add_argument("--type", choices=["all", "engines", "runtimes", "engine", "runtime"], default="all",
+                        help="Filter execution target: 'engines' (pure VMs: R8, d8, QuickJS, JSC) or 'runtimes' (Bun, Node, Deno), or 'all' (default)")
     parser.add_argument("--benchmarks", nargs="+", help="Filter benchmarks by name (e.g. 01_arithmetic_loop)")
     parser.add_argument("--iterations", type=int, default=5, help="Number of measurement runs (default: 5)")
     parser.add_argument("--warmup", type=int, default=2, help="Number of warmup runs (default: 2)")
+    parser.add_argument("--auto-install", action="store_true", help="Automatically install missing engines/runtimes into local .engines/ directory")
+    parser.add_argument("--install", nargs="*", default=None, help="Explicitly install specified engines (e.g. --install bun r8 or --install all) and exit")
     parser.add_argument("--no-html", action="store_true", help="Skip generating HTML report")
     parser.add_argument("--output-dir", type=str, default=str(RESULTS_DIR), help="Output directory for reports")
     args = parser.parse_args()
+
+    # Handle explicit --install action
+    if args.install is not None:
+        print_header("JavaScript Engine Installer")
+        all_engines = load_engine_registry()
+        targets = []
+        if len(args.install) == 0 or "all" in args.install:
+            targets = [e for e in all_engines if "install" in e]
+        else:
+            for tid in args.install:
+                found_eng = next((e for e in all_engines if e["id"] == tid), None)
+                if found_eng:
+                    targets.append(found_eng)
+                else:
+                    print(f"[-] Unknown engine ID for installation: {tid}")
+
+        if not targets:
+            print("[!] No matching installable engines found.")
+            sys.exit(1)
+
+        print(f"Installing {len(targets)} target(s)...")
+        for e in targets:
+            install_engine(e, force=True)
+        print("\n[OK] Installation routine complete.")
+        sys.exit(0)
 
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     print_header("JavaScript Engines Benchmark Runner")
     print(f"Directory:    {BASE_DIR}")
+    print(f"Filter Type:  {args.type}")
     print(f"Iterations:   {args.iterations} measurement runs, {args.warmup} warmups")
+    if args.auto_install:
+        print(f"Auto-install: Enabled (targets installed to {BASE_DIR / '.engines'})")
 
     # 1. Discover Engines
     all_engines = load_engine_registry()
     active_engines = []
 
+    target_type = None
+    if args.type in ("engines", "engine"):
+        target_type = "engine"
+    elif args.type in ("runtimes", "runtime"):
+        target_type = "runtime"
+
     for eng in all_engines:
         eng_id = eng["id"]
+        if target_type and eng.get("type") != target_type:
+            continue
+
         if args.engines and eng_id not in args.engines:
             continue
 
@@ -227,7 +288,7 @@ def main():
         if enabled is True:
             active_engines.append(eng)
         elif enabled == "auto":
-            if check_engine_availability(eng):
+            if check_engine_availability(eng, auto_install=args.auto_install):
                 active_engines.append(eng)
             else:
                 print(f"[-] Engine '{eng['name']}' ({eng_id}) not found on system. Skipping.")
@@ -235,12 +296,14 @@ def main():
             print(f"[-] Engine '{eng['name']}' ({eng_id}) disabled in engines.json.")
 
     if not active_engines:
-        print("\n[ERROR] No active JavaScript engines available to benchmark!")
+        print("\n[ERROR] No active JavaScript engines available to benchmark matching the criteria!")
         sys.exit(1)
 
     print(f"\n[+] Active Engines ({len(active_engines)}):")
     for eng in active_engines:
-        print(f"    * {eng['name']:<30} [{eng['id']}] -> {eng['command']}")
+        e_type = eng.get("type", "engine").upper()
+        e_backend = eng.get("engine_backend", "VM")
+        print(f"    * {eng['name']:<30} [{e_type}: {e_backend:<22}] [{eng['id']}] -> {eng['command']}")
 
     # 2. Discover Benchmarks
     benchmark_files = discover_benchmarks(args.benchmarks)
@@ -322,9 +385,9 @@ def main():
 
     # 4. Checksum Parity Validation & Results Summary Table
     print_header("Performance Summary & Checksum Validation")
-    header_fmt = "{:<26} | {:<24} | {:>10} | {:>10} | {:>9} | {:>14} | {:<12}"
-    print(header_fmt.format("Benchmark", "Engine", "Mean (ms)", "Median", "StdDev", "vs Baseline", "Checksum"))
-    print("-" * 115)
+    header_fmt = "{:<24} | {:<26} | {:<8} | {:>10} | {:>10} | {:>9} | {:>14} | {:<12}"
+    print(header_fmt.format("Benchmark", "Target", "Type", "Mean (ms)", "Median", "StdDev", "vs Baseline", "Checksum"))
+    print("-" * 125)
 
     summary_md_rows = []
 
@@ -346,10 +409,12 @@ def main():
 
         for eng in active_engines:
             e_id = eng["id"]
+            e_type = eng.get("type", "engine").capitalize()
+            e_backend = eng.get("engine_backend", "VM")
             data = b_res.get(e_id, {})
             if data.get("error"):
-                print(header_fmt.format(b_id, eng["name"], "ERR", "ERR", "ERR", "N/A", "FAIL"))
-                summary_md_rows.append(f"| `{b_id}` | {eng['name']} | ERR | ERR | - | FAIL |")
+                print(header_fmt.format(b_id, eng["name"][:26], e_type, "ERR", "ERR", "ERR", "N/A", "FAIL"))
+                summary_md_rows.append(f"| `{b_id}` | {eng['name']} | **{e_type}** | {e_backend} | ERR | ERR | - | FAIL |")
                 continue
 
             mean = data["mean"]
@@ -366,8 +431,8 @@ def main():
                 rel_str = f"{(1/speedup):.2f}x slower"
 
             csum_status = "PASS" if csum == ref_checksum else f"MISMATCH ({csum})"
-            print(header_fmt.format(b_id, eng["name"][:24], f"{mean:.2f}", f"{median:.2f}", f"±{std_dev:.2f}", rel_str, csum_status))
-            summary_md_rows.append(f"| `{b_id}` | {eng['name']} | {mean:.2f} ms | {median:.2f} ms | {rel_str} | `{csum}` ({csum_status}) |")
+            print(header_fmt.format(b_id, eng["name"][:26], e_type, f"{mean:.2f}", f"{median:.2f}", f"±{std_dev:.2f}", rel_str, csum_status))
+            summary_md_rows.append(f"| `{b_id}` | {eng['name']} | **{e_type}** | {e_backend} | {mean:.2f} ms | {median:.2f} ms | {rel_str} | `{csum}` ({csum_status}) |")
 
     # 5. Export JSON
     export_payload = {
@@ -391,8 +456,8 @@ def main():
     with open(summary_md_path, "w", encoding="utf-8") as f:
         f.write("# JavaScript Engines Benchmark Summary\n\n")
         f.write(f"Generated on {time.ctime()} with {args.iterations} measurement passes and {args.warmup} warmups.\n\n")
-        f.write("| Benchmark | Engine | Mean Duration | Median Duration | Relative vs V8 | Mathematical Checksum |\n")
-        f.write("|:---|:---|:---:|:---:|:---:|:---:|\n")
+        f.write("| Benchmark | Target | Type | VM Backend | Mean Duration | Median Duration | Relative vs Baseline | Mathematical Checksum |\n")
+        f.write("|:---|:---|:---:|:---|:---:|:---:|:---:|:---:|\n")
         for row in summary_md_rows:
             f.write(row + "\n")
     print(f"[+] Summary markdown written to: {summary_md_path}")
