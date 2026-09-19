@@ -38,16 +38,23 @@ def load_engine_registry():
         data = json.load(f)
     return data.get("engines", [])
 
-def check_engine_availability(engine, auto_install=False):
-    # 0. Check if engine is already provisioned in local .engines/<id>/
+def check_engine_availability(engine, auto_install=False, prefer_prebuilt=False):
+    # 0. If prebuilt explicitly requested and engine has install metadata, provision directly
+    if prefer_prebuilt and engine.get("install"):
+        newly_installed = install_engine(engine, force=True, prefer_prebuilt=True)
+        if newly_installed and newly_installed.is_file():
+            engine["command"] = str(newly_installed)
+            return True
+
+    # 1. Check if engine is already provisioned in local .engines/<id>/
     installed = get_installed_path(engine)
     if installed and installed.is_file():
         engine["command"] = str(installed)
         return True
 
-    # 1. If auto_install requested and engine has install metadata, provision it now
+    # 2. If auto_install requested and engine has install metadata, provision it now
     if auto_install and engine.get("install"):
-        newly_installed = install_engine(engine)
+        newly_installed = install_engine(engine, prefer_prebuilt=prefer_prebuilt)
         if newly_installed and newly_installed.is_file():
             engine["command"] = str(newly_installed)
             return True
@@ -55,17 +62,17 @@ def check_engine_availability(engine, auto_install=False):
     cmd_raw = engine.get("command", "")
     cmd_path = Path(cmd_raw)
 
-    # 2. Check if direct executable path exists
+    # 3. Check if direct executable path exists
     if cmd_path.exists() and cmd_path.is_file():
         return True
 
-    # 2. Check if relative to BASE_DIR
+    # 4. Check if relative to BASE_DIR
     rel_path = (BASE_DIR / cmd_raw).resolve()
     if rel_path.exists() and rel_path.is_file():
         engine["command"] = str(rel_path)
         return True
 
-    # 3. For R8, search common relative sibling directories and environment variables
+    # 5. For R8, search common relative sibling directories and environment variables
     if engine.get("id") == "r8":
         r8_env = os.environ.get("R8_PATH") or os.environ.get("R8_BIN")
         if r8_env and Path(r8_env).is_file():
@@ -75,16 +82,8 @@ def check_engine_availability(engine, auto_install=False):
         candidates = [
             BASE_DIR.parent / "r8" / "target" / "release" / "r8.exe",
             BASE_DIR.parent / "r8" / "target" / "release" / "r8",
-            BASE_DIR.parent / "Chromium-Rust" / "target" / "release" / "r8.exe",
-            BASE_DIR.parent / "Chromium-Rust" / "target" / "release" / "r8",
-            BASE_DIR.parent / "r8" / "target" / "release" / "d8.exe",
-            BASE_DIR.parent / "r8" / "target" / "release" / "d8",
-            BASE_DIR.parent / "Chromium-Rust" / "target" / "release" / "d8.exe",
-            BASE_DIR.parent / "Chromium-Rust" / "target" / "release" / "d8",
             BASE_DIR / "bin" / "r8.exe",
             BASE_DIR / "bin" / "r8",
-            BASE_DIR / "bin" / "d8.exe",
-            BASE_DIR / "bin" / "d8",
         ]
         for cand in candidates:
             if cand.exists() and cand.is_file():
@@ -97,15 +96,15 @@ def check_engine_availability(engine, auto_install=False):
             engine["command"] = str(bun_home.resolve())
             return True
 
-    # 4. Check if executable is available on system PATH
+    # 6. Check if executable is available on system PATH
     found = shutil.which(cmd_raw)
     if found:
         return True
 
     if engine.get("id") == "r8":
-        found_d8 = shutil.which("d8") or shutil.which("r8")
-        if found_d8:
-            engine["command"] = found_d8
+        found_r8 = shutil.which("r8")
+        if found_r8:
+            engine["command"] = found_r8
             return True
 
     # 5. Check version args test
@@ -227,6 +226,7 @@ def main():
     parser.add_argument("--warmup", type=int, default=2, help="Number of warmup runs (default: 2)")
     parser.add_argument("--auto-install", action="store_true", help="Automatically install missing engines/runtimes into local .engines/ directory")
     parser.add_argument("--install", nargs="*", default=None, help="Explicitly install specified engines (e.g. --install bun r8 or --install all) and exit")
+    parser.add_argument("--prebuilt", action="store_true", help="Prefer downloading official prebuilt binaries from GitHub Releases")
     parser.add_argument("--no-html", action="store_true", help="Skip generating HTML report")
     parser.add_argument("--output-dir", type=str, default=str(RESULTS_DIR), help="Output directory for reports")
     args = parser.parse_args()
@@ -252,7 +252,7 @@ def main():
 
         print(f"Installing {len(targets)} target(s)...")
         for e in targets:
-            install_engine(e, force=True)
+            install_engine(e, force=True, prefer_prebuilt=args.prebuilt)
         print("\n[OK] Installation routine complete.")
         sys.exit(0)
 
@@ -265,6 +265,8 @@ def main():
     print(f"Iterations:   {args.iterations} measurement runs, {args.warmup} warmups")
     if args.auto_install:
         print(f"Auto-install: Enabled (targets installed to {BASE_DIR / '.engines'})")
+    if args.prebuilt:
+        print(f"Mode:         Prefer official GitHub prebuilt releases")
 
     # 1. Discover Engines
     all_engines = load_engine_registry()
@@ -288,7 +290,7 @@ def main():
         if enabled is True:
             active_engines.append(eng)
         elif enabled == "auto":
-            if check_engine_availability(eng, auto_install=args.auto_install):
+            if check_engine_availability(eng, auto_install=args.auto_install, prefer_prebuilt=args.prebuilt):
                 active_engines.append(eng)
             else:
                 print(f"[-] Engine '{eng['name']}' ({eng_id}) not found on system. Skipping.")
