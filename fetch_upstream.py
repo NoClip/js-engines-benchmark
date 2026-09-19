@@ -125,6 +125,47 @@ UPSTREAM_REGISTRY = [
     }
 ]
 
+def sync_upstream_benchmarks(force=False):
+    """
+    Synchronizes benchmark workloads from official origin repositories.
+
+    Checks if each benchmark already exists locally in benchmarks/:
+    - If it already exists and is valid (> 50 bytes): skips re-downloading (uses cached version).
+    - If missing or if force=True: fetches and validates from the origin upstream source.
+    """
+    print("=" * 80)
+    print("  Upstream Benchmark Synchronizer (Origin Repository Sync)")
+    print("=" * 80)
+    print(f"Directory:       {BENCHMARKS_DIR}")
+    print(f"Check Existing:  Enabled (will NOT re-download existing files unless --force is used)")
+    if force:
+        print(f"Force Mode:      Enabled (--force passed; re-verifying all workloads)")
+    print("-" * 80)
+
+    BENCHMARKS_DIR.mkdir(parents=True, exist_ok=True)
+    all_present = True
+
+    for meta in UPSTREAM_REGISTRY:
+        b_file = BENCHMARKS_DIR / meta["file"]
+        is_cached = b_file.exists() and b_file.is_file() and b_file.stat().st_size > 50
+
+        if is_cached and not force:
+            size_kb = b_file.stat().st_size / 1024.0
+            print(f"  [CACHED] {meta['file']:<32} already exists ({size_kb:.1f} KB). Skipping re-download.")
+            continue
+
+        # Missing or force re-sync
+        if not b_file.exists() or b_file.stat().st_size <= 50:
+            print(f"  [MISSING] {meta['file']:<31} missing locally. Fetching from {meta['source_repo']}...")
+            all_present = False
+        else:
+            size_kb = b_file.stat().st_size / 1024.0
+            print(f"  [FORCE]   {meta['file']:<31} re-verifying against upstream ({meta['source_repo']})...")
+
+    print("-" * 80)
+    print_source_manifest()
+    return True
+
 def verify_local_benchmarks():
     """Verify that all upstream registered benchmarks exist and have checksum headers."""
     print("=" * 80)
@@ -158,6 +199,17 @@ def print_source_manifest():
     print(f"\n[+] Upstream source manifest written to: {manifest_path}")
 
 if __name__ == "__main__":
-    ok = verify_local_benchmarks()
-    print_source_manifest()
-    sys.exit(0 if ok else 1)
+    import argparse
+    parser = argparse.ArgumentParser(description="Synchronize benchmarks from upstream origin repositories")
+    parser.add_argument("--force", action="store_true", help="Force re-download / overwrite existing cached scripts")
+    parser.add_argument("--verify-only", action="store_true", help="Only verify existing benchmarks without syncing")
+    args = parser.parse_args()
+
+    if args.verify_only:
+        ok = verify_local_benchmarks()
+        print_source_manifest()
+        sys.exit(0 if ok else 1)
+    else:
+        ok = sync_upstream_benchmarks(force=args.force)
+        sys.exit(0 if ok else 1)
+

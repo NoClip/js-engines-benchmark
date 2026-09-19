@@ -227,9 +227,22 @@ def main():
     parser.add_argument("--warmup", type=int, default=2, help="Number of warmup runs (default: 2)")
     parser.add_argument("--auto-install", action="store_true", help="Automatically install missing engines/runtimes into local .engines/ directory")
     parser.add_argument("--install", nargs="*", default=None, help="Explicitly install specified engines (e.g. --install bun r8 or --install all) and exit")
+    parser.add_argument("--sync-upstream", action="store_true", help="Synchronize benchmarks from official origin repositories (skips existing files unless --force is passed)")
+    parser.add_argument("--force", action="store_true", help="Force re-download / overwrite existing cached scripts or engines")
     parser.add_argument("--no-html", action="store_true", help="Skip generating HTML report")
     parser.add_argument("--output-dir", type=str, default=str(RESULTS_DIR), help="Output directory for reports")
     args = parser.parse_args()
+
+    # Handle --sync-upstream action
+    if args.sync_upstream:
+        from fetch_upstream import sync_upstream_benchmarks
+        ok = sync_upstream_benchmarks(force=args.force)
+        if not ok:
+            sys.exit(1)
+        # Exit early if invoked specifically as a sync maintenance task
+        if not args.engines and not args.benchmarks and not args.auto_install and args.install is None and "--iterations" not in sys.argv and "--warmup" not in sys.argv:
+            print("\n[OK] Upstream benchmark synchronization routine complete.")
+            sys.exit(0)
 
     # Handle explicit --install action
     if args.install is not None:
@@ -252,7 +265,7 @@ def main():
 
         print(f"Installing {len(targets)} target(s)...")
         for e in targets:
-            install_engine(e, force=True)
+            install_engine(e, force=args.force if args.force else True)
         print("\n[OK] Installation routine complete.")
         sys.exit(0)
 

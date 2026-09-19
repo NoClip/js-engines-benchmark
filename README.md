@@ -16,12 +16,15 @@ Built to compare **R8 (Rust V8)**, **Google V8 (TurboFan Full JIT & Jitless)**, 
 - ⚡ [Quickstart](#quickstart)
 - 📖 [Complete Usage Guide](#complete-usage-guide)
   - [1. Basic Execution (All Engines & Benchmarks)](#1-basic-execution)
-  - [2. Filtering Specific Engines](#2-filtering-specific-engines)
-  - [3. Filtering Specific Benchmarks](#3-filtering-specific-benchmarks)
-  - [4. Custom Warmup & Measurement Iterations](#4-custom-warmup--measurement-iterations)
-  - [5. Headless / CI Mode & Custom Output Directory](#5-headless--ci-mode--custom-output-directory)
-  - [6. Viewing Reports & Outputs](#6-viewing-reports--outputs)
-  - [7. Complete CLI Reference Table](#7-complete-cli-reference-table)
+  - [2. Pure Engines vs. Runtimes Filtering (`--type`)](#2-pure-engines-vs-runtimes-filtering---type)
+  - [3. Automated Zero-Permission Engine Installer (`--auto-install` & `--install`)](#3-automated-zero-permission-engine-installer---auto-install----install)
+  - [4. Origin Upstream Benchmark Synchronization (`--sync-upstream`)](#4-origin-upstream-benchmark-synchronization---sync-upstream)
+  - [5. Filtering Specific Engines](#5-filtering-specific-engines)
+  - [6. Filtering Specific Benchmarks](#6-filtering-specific-benchmarks)
+  - [7. Custom Warmup & Measurement Iterations](#7-custom-warmup--measurement-iterations)
+  - [8. Headless / CI Mode & Custom Output Directory](#8-headless--ci-mode--custom-output-directory)
+  - [9. Viewing Reports & Outputs](#9-viewing-reports--outputs)
+  - [10. Complete CLI Reference Table](#10-complete-cli-reference-table)
 - 🛠️ [Engine Installation Guide](#engine-installation-guide)
   - [1. R8 (Rust V8)](#1-r8-rust-v8)
   - [2. Google V8 (TurboFan & Jitless)](#2-google-v8-turbofan--jitless)
@@ -98,7 +101,22 @@ python runner.py --install r8 v8_standalone spidermonkey bun deno quickjs
 python runner.py --install all
 ```
 
-### 4. Filtering Specific Engines
+### 4. Origin Upstream Benchmark Synchronization (`--sync-upstream`)
+Synchronize benchmarks directly with their official origin repositories (Bun's `oven-sh/bun/bench/`, Google V8, CLBG, Kraken, SunSpider).
+
+The synchronizer performs **smart cache checking**: it verifies whether each benchmark script already exists locally in `benchmarks/` and **will not re-download** files that are already cached:
+```bash
+# Check and synchronize benchmarks from origin repositories (skips already downloaded scripts)
+python runner.py --sync-upstream
+
+# Force re-download and re-verification of all origin benchmark scripts
+python runner.py --sync-upstream --force
+
+# Or run the dedicated synchronizer script directly:
+python fetch_upstream.py
+```
+
+### 5. Filtering Specific Engines
 Use `--engines` to specify one or more engine IDs defined in `engines.json`:
 ```bash
 # Compare R8 against Google V8 TurboFan
@@ -111,7 +129,7 @@ python runner.py --engines r8 v8_turbofan v8_jitless
 python runner.py --engines r8 v8_turbofan bun deno quickjs
 ```
 
-### 5. Filtering Specific Benchmarks
+### 6. Filtering Specific Benchmarks
 Use `--benchmarks` to specify one or more benchmark script names (stem or full filename):
 ```bash
 # Run only recursive fibonacci
@@ -121,7 +139,7 @@ python runner.py --benchmarks 02_recursive_fibonacci
 python runner.py --benchmarks 01_arithmetic_loop 08_prime_sieve
 ```
 
-### 6. Custom Warmup & Measurement Iterations
+### 7. Custom Warmup & Measurement Iterations
 Customize the statistical rigor using `--warmup` and `--iterations`:
 ```bash
 # Quick test (0 warmups, 1 measurement run)
@@ -131,14 +149,14 @@ python runner.py --warmup 0 --iterations 1
 python runner.py --warmup 5 --iterations 20
 ```
 
-### 7. Headless / CI Mode & Custom Output Directory
+### 8. Headless / CI Mode & Custom Output Directory
 For automated testing in CI/CD pipelines:
 ```bash
 # Skip HTML report generation and output results to custom folder
 python runner.py --no-html --output-dir ./ci-artifacts
 ```
 
-### 8. Viewing Reports & Outputs
+### 9. Viewing Reports & Outputs
 After running the benchmark suite, the tool generates multiple report formats:
 
 1. **Terminal Summary Table**: Real-time mean execution time, target type (Engine vs Runtime), VM backend, standard deviation ($\pm\sigma$), speedup vs baseline, and checksum parity status (`PASS` / `FAIL`).
@@ -151,15 +169,17 @@ After running the benchmark suite, the tool generates multiple report formats:
 3. **Machine-Readable JSON (`results/latest.json`)**: Full execution metadata, engine type, engine backend, raw timing samples, median, min, max, stddev, and checksums for automated analysis.
 4. **Markdown Table (`results/summary.md`)**: GitHub-flavored markdown table with target type badges ready for copy-pasting into pull requests or READMEs.
 
-### 9. Complete CLI Reference Table
+### 10. Complete CLI Reference Table
 
 | Argument | Flag | Type | Default | Description |
 |:---|:---|:---:|:---:|:---|
 | Target Type | `--type` | `str` | `all` | Filter execution target: `engines` (pure VMs: R8, d8, QuickJS, JSC), `runtimes` (Bun, Node, Deno), or `all`. |
 | Auto-Install | `--auto-install` | `flag` | `False` | Automatically download and provision missing engines into local `.engines/`. |
 | Manual Install | `--install` | `str...` | `None` | Pre-install specified engines (e.g. `--install bun r8 quickjs` or `--install all`) and exit. |
+| Upstream Sync | `--sync-upstream` | `flag` | `False` | Synchronize benchmarks from origin repositories (Bun, V8, CLBG). Skips existing files unless `--force` is used. |
+| Force Overwrite | `--force` | `flag` | `False` | Forces re-download and re-verification of cached scripts or prebuilt engine binaries. |
 | Filter Engines | `--engines` | `str...` | *All detected* | Space-separated engine IDs to benchmark (`r8`, `v8_turbofan`, `v8_jitless`, `bun`, `deno`, `quickjs`). |
-| Filter Benchmarks | `--benchmarks` | `str...` | *All (01-08)* | Space-separated benchmark names (e.g. `01_arithmetic_loop 02_recursive_fibonacci`). |
+| Filter Benchmarks | `--benchmarks` | `str...` | *All (01-12)* | Space-separated benchmark names (e.g. `01_arithmetic_loop 02_recursive_fibonacci`). |
 | Measurement Iterations | `--iterations` | `int` | `5` | Number of timed measurement runs per benchmark per engine. |
 | Warmup Passes | `--warmup` | `int` | `2` | Number of untimed warmup passes executed before measurement to prime JIT compilation and caches. |
 | Skip HTML Generation | `--no-html` | `flag` | `False` | Disables rendering the interactive `report.html` dashboard. |
