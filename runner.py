@@ -92,6 +92,16 @@ def check_engine_availability(engine, auto_install=False):
     if found:
         return True
 
+    if engine.get("id") == "javascriptcore":
+        macos_jsc_paths = [
+            Path("/System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc"),
+            Path("/System/Library/Frameworks/JavaScriptCore.framework/Resources/jsc"),
+        ]
+        for p in macos_jsc_paths:
+            if p.exists() and p.is_file():
+                engine["command"] = str(p)
+                return True
+
     if engine.get("id") == "r8":
         found_r8 = shutil.which("r8")
         if found_r8:
@@ -281,7 +291,10 @@ def main():
             if check_engine_availability(eng, auto_install=args.auto_install):
                 active_engines.append(eng)
             else:
-                print(f"[-] Engine '{eng['name']}' ({eng_id}) not found on system. Skipping.")
+                if eng_id == "javascriptcore":
+                    print(f"[-] Engine '{eng['name']}' ({eng_id}) not found (Apple ships no standalone Windows/Linux binaries; WebKit JSC is evaluated via Bun). Skipping.")
+                else:
+                    print(f"[-] Engine '{eng['name']}' ({eng_id}) not found on system. Skipping.")
         else:
             print(f"[-] Engine '{eng['name']}' ({eng_id}) disabled in engines.json.")
 

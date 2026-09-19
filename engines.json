@@ -105,7 +105,7 @@
       "args": ["{file}"],
       "enabled": "auto",
       "version_args": ["-e", "print(1)"],
-      "description": "Apple WebKit standalone JavaScriptCore (JSC) VM shell",
+      "description": "Apple WebKit standalone JavaScriptCore (JSC) VM shell (built-in on macOS; evaluated via Bun on Windows/Linux)",
       "color": "#a074c4"
     },
     {
