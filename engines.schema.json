@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JSEngineRegistry",
+  "description": "Configuration schema for multi-engine JavaScript benchmark suite",
+  "type": "object",
+  "required": ["engines"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "engines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type", "engine_backend", "command"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the engine/runtime (e.g. r8, v8_turbofan, bun, quickjs)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable display name"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["engine", "runtime"],
+            "description": "Taxonomy classification: pure JS Engine (VM) or full Runtime"
+          },
+          "engine_backend": {
+            "type": "string",
+            "description": "Underlying JavaScript virtual machine (e.g. Rust V8, Google V8 C++, WebKit JavaScriptCore, QuickJS C, SpiderMonkey C++)"
+          },
+          "command": {
+            "type": "string",
+            "description": "Default binary command or path"
+          },
+          "args": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Command line arguments passed to execute script ({file} placeholder)"
+          },
+          "enabled": {
+            "oneOf": [
+              { "type": "boolean" },
+              { "type": "string", "enum": ["auto"] }
+            ],
+            "description": "Enable status: true, false, or 'auto' (detect if binary is present)"
+          },
+          "version_args": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "CLI flags used to test availability and version"
+          },
+          "description": {
+            "type": "string",
+            "description": "Short description of the engine architecture"
+          },
+          "color": {
+            "type": "string",
+            "description": "Hex color code for charts and reports"
+          },
+          "install": {
+            "type": "object",
+            "description": "Automated zero-permission provisioning configuration",
+            "required": ["strategy"],
+            "properties": {
+              "strategy": {
+                "type": "string",
+                "enum": [
+                  "r8_source_or_release",
+                  "v8_archive",
+                  "spidermonkey_archive",
+                  "direct_binary",
+                  "archive"
+                ]
+              },
+              "github_repo": {
+                "type": "string"
+              },
+              "binary_name": {
+                "type": "object",
+                "properties": {
+                  "windows": { "type": "string" },
+                  "linux": { "type": "string" },
+                  "darwin": { "type": "string" }
+                }
+              },
+              "downloads": {
+                "type": "object",
+                "properties": {
+                  "windows_x64": { "type": "string" },
+                  "linux_x64": { "type": "string" },
+                  "darwin_arm64": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

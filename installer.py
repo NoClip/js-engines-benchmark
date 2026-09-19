@@ -184,8 +184,95 @@ def install_engine(engine, force=False):
             print(f"    [!] Failed to download direct binary: {e}")
             return None
 
-    # Strategy 3: Download archive (zip / tar.gz) and extract
-    elif strategy in ("archive", "v8_archive"):
+    # Strategy 3: Google V8 Standalone (dynamic canary version resolution)
+    elif strategy == "v8_archive":
+        v8_os_map = {
+            "windows_x64": "win64",
+            "linux_x64": "linux64",
+            "darwin_arm64": "mac-arm64",
+            "darwin_x64": "mac64"
+        }
+        v8_platform = v8_os_map.get(platform_key, "win64")
+        version_json_url = f"https://storage.googleapis.com/chromium-v8/official/canary/v8-{v8_platform}-rel-latest.json"
+        print(f"    [v8] Resolving latest canary version from {version_json_url}...")
+        try:
+            import json as json_lib
+            req = urllib.request.Request(version_json_url, headers={"User-Agent": "js-engines-benchmark/1.0"})
+            with urllib.request.urlopen(req) as resp:
+                v_data = json_lib.loads(resp.read().decode("utf-8"))
+                latest_v8_ver = v_data.get("version")
+            download_url = f"https://storage.googleapis.com/chromium-v8/official/canary/v8-{v8_platform}-rel-{latest_v8_ver}.zip"
+            print(f"    [v8] Canary version: {latest_v8_ver} -> {download_url}")
+            tmp_archive = engine_dir / "download.zip"
+
+            def print_progress(cur, total):
+                pct = int(cur / total * 100)
+                sys.stdout.write(f"\r    [download] {pct}% ({cur // 1024} KB / {total // 1024} KB)")
+                sys.stdout.flush()
+
+            download_file(download_url, tmp_archive, progress_callback=print_progress)
+            print("\n    [extract] Unpacking V8 archive (d8, snapshot_blob, icudtl)...")
+            extract_archive(tmp_archive, engine_dir)
+            if tmp_archive.exists():
+                tmp_archive.unlink()
+
+            if not final_bin_path.exists():
+                for found_file in engine_dir.rglob(binary_name):
+                    if found_file.is_file():
+                        shutil.move(str(found_file), str(final_bin_path))
+                        break
+
+            if os_name != "windows" and final_bin_path.exists():
+                os.chmod(final_bin_path, 0o755)
+
+        except Exception as e:
+            print(f"    [!] Failed to download/install official V8: {e}")
+            return None
+
+    # Strategy 4: Mozilla SpiderMonkey (jsshell prebuilt archive)
+    elif strategy == "spidermonkey_archive":
+        sm_os_map = {
+            "windows_x64": "win64",
+            "linux_x64": "linux-x86_64",
+            "darwin_arm64": "mac",
+            "darwin_x64": "mac"
+        }
+        sm_platform = sm_os_map.get(platform_key, "win64")
+        sm_version = "136.0"
+        download_url = f"https://archive.mozilla.org/pub/firefox/releases/{sm_version}/jsshell/jsshell-{sm_platform}.zip"
+        print(f"    [spidermonkey] Fetching Mozilla jsshell ({sm_version}) from {download_url}...")
+        try:
+            tmp_archive = engine_dir / "download.zip"
+
+            def print_progress(cur, total):
+                pct = int(cur / total * 100)
+                sys.stdout.write(f"\r    [download] {pct}% ({cur // 1024} KB / {total // 1024} KB)")
+                sys.stdout.flush()
+
+            download_file(download_url, tmp_archive, progress_callback=print_progress)
+            print("\n    [extract] Unpacking SpiderMonkey archive...")
+            extract_archive(tmp_archive, engine_dir)
+            if tmp_archive.exists():
+                tmp_archive.unlink()
+
+            # Locate js.exe or js and ensure final_bin_path exists
+            for cand in ["js.exe", "js", binary_name]:
+                found = list(engine_dir.rglob(cand))
+                if found and found[0].is_file():
+                    target_file = found[0]
+                    if target_file != final_bin_path:
+                        shutil.copy2(str(target_file), str(final_bin_path))
+                    break
+
+            if os_name != "windows" and final_bin_path.exists():
+                os.chmod(final_bin_path, 0o755)
+
+        except Exception as e:
+            print(f"    [!] Failed to download/install SpiderMonkey: {e}")
+            return None
+
+    # Strategy 5: Generic archive download (zip / tar.gz) and extract
+    elif strategy == "archive":
         downloads = install_meta.get("downloads", {})
         download_url = downloads.get(platform_key)
         if not download_url:

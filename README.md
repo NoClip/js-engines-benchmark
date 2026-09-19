@@ -47,7 +47,7 @@ Built to compare **R8 (Rust V8)**, **Google V8 (TurboFan Full JIT & Jitless)**, 
 git clone https://github.com/NoClip/js-engines-benchmark.git
 cd js-engines-benchmark
 
-# 2. Run with zero-setup auto-install (automatically provisions R8, Bun, Deno, QuickJS)
+# 2. Run with zero-setup auto-install (provisions R8, Google d8, SpiderMonkey, Bun, Deno, QuickJS)
 python runner.py --auto-install
 
 # Or run with existing system-installed engines
@@ -61,7 +61,7 @@ python runner.py
 ## 📖 Complete Usage Guide
 
 ### 1. Basic Execution
-Run all 8 benchmarks across all detected JavaScript engines and runtimes on your system with default settings (2 warmups, 5 iterations):
+Run all 12 benchmarks across all detected JavaScript engines and runtimes on your system with default settings (2 warmups, 5 iterations):
 ```bash
 python runner.py
 ```
@@ -69,7 +69,7 @@ python runner.py
 ### 2. Pure Engines vs. Runtimes Filtering (`--type`)
 Distinguish between pure JavaScript Virtual Machines and full application runtimes:
 ```bash
-# Benchmark ONLY pure JavaScript Engines (R8, QuickJS, Standalone V8 d8, JSC)
+# Benchmark ONLY pure JavaScript Engines (R8, Google V8 d8, Mozilla SpiderMonkey sm, QuickJS, Apple JSC)
 python runner.py --type engines
 
 # Benchmark ONLY JavaScript Runtimes (Bun, Node.js, Deno)
@@ -80,7 +80,7 @@ python runner.py --type all
 ```
 
 > **Taxonomy Note**:
-> - **JS Engine (VM)**: Pure execution engine that compiles and runs JavaScript bytecode/machine code without I/O runtimes (e.g. **R8 (Rust V8)**, **Google V8 Standalone (`d8`)**, **QuickJS (`qjs`)**, **JavaScriptCore (`jsc`)**). **R8 is strictly an Engine, not a runtime.**
+> - **JS Engine (VM)**: Pure execution engine that compiles and runs JavaScript bytecode/machine code without I/O runtimes (e.g. **R8 (Rust V8)**, **Google V8 Standalone (`d8`)**, **Mozilla SpiderMonkey (`sm`)**, **QuickJS (`qjs`)**, **JavaScriptCore (`jsc`)**). **R8 is strictly an Engine, not a runtime.**
 > - **JS Runtime**: Application environment bundling a JS engine with event loop, OS I/O, and Web APIs (e.g. **Bun** = WebKit JSC + Zig, **Node.js** = Google V8 + libuv, **Deno** = Google V8 + Tokio).
 
 ### 3. Automated Zero-Permission Engine Installer (`--auto-install` & `--install`)
@@ -90,7 +90,7 @@ Never worry about manually downloading or setting up engines. The built-in provi
 python runner.py --auto-install
 
 # Pre-install specific engines on demand
-python runner.py --install bun quickjs deno r8
+python runner.py --install r8 v8_standalone spidermonkey bun deno quickjs
 
 # Pre-install all supported engines in one command
 python runner.py --install all

@@ -77,6 +77,26 @@
       }
     },
     {
+      "id": "spidermonkey",
+      "name": "Mozilla SpiderMonkey (sm)",
+      "type": "engine",
+      "engine_backend": "SpiderMonkey C++",
+      "command": "sm",
+      "args": ["{file}"],
+      "enabled": "auto",
+      "version_args": ["--version"],
+      "description": "Mozilla Firefox's official SpiderMonkey JavaScript/WASM C++ Engine (jsshell)",
+      "color": "#e5c07b",
+      "install": {
+        "strategy": "spidermonkey_archive",
+        "binary_name": {
+          "windows": "sm.exe",
+          "linux": "sm",
+          "darwin": "sm"
+        }
+      }
+    },
+    {
       "id": "javascriptcore",
       "name": "Apple JavaScriptCore (jsc)",
       "type": "engine",
