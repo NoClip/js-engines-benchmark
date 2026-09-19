@@ -31,19 +31,24 @@
         body {
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            line-height: 1.6;
-            padding: 30px;
+            line-height: 1.5;
+            padding: 0;
+            margin: 0;
+            width: 100vw;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 100%;
+            padding: 24px 32px;
+            box-sizing: border-box;
         }
 
         header {
-            margin-bottom: 30px;
+            margin-bottom: 24px;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 20px;
+            padding-bottom: 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -52,7 +57,7 @@
         }
 
         .header-title h1 {
-            font-size: 2rem;
+            font-size: 1.9rem;
             font-weight: 700;
             background: linear-gradient(135deg, #58a6ff, #bc8cff, #3fb950);
             -webkit-background-clip: text;
@@ -61,14 +66,14 @@
 
         .header-title p {
             color: var(--text-secondary);
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             margin-top: 4px;
         }
 
         .header-meta {
             display: flex;
-            gap: 12px;
-            font-size: 0.85rem;
+            gap: 10px;
+            font-size: 0.82rem;
             color: var(--text-secondary);
         }
 
@@ -79,106 +84,25 @@
             border-radius: 20px;
         }
 
-        .stat-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: var(--bg-secondary);
+        /* Frozen Sticky Top Controls Bar */
+        .sticky-controls-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(15, 20, 28, 0.94);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .stat-card-title {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-card-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-top: 8px;
-            color: var(--text-primary);
-        }
-
-        .stat-card-subtitle {
-            font-size: 0.8rem;
-            color: var(--accent-green);
-            margin-top: 4px;
-        }
-
-        .engine-legend {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 25px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .legend-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .charts-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        @media (min-width: 1024px) {
-            .charts-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .chart-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
+            padding: 14px 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
             display: flex;
             flex-direction: column;
+            gap: 12px;
         }
 
-        .chart-container {
-            position: relative;
-            height: 380px;
-            width: 100%;
-        }
-
-        .chart-card h2 {
-            font-size: 1.15rem;
-            margin-bottom: 16px;
-            color: var(--text-primary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Interactive Controls Bar */
-        .controls-bar {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 20px;
+        .controls-row {
             display: flex;
             flex-wrap: wrap;
             gap: 16px;
@@ -190,39 +114,32 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .control-label {
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .control-select, .control-input {
+        .control-select {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
-            padding: 8px 12px;
+            padding: 7px 12px;
             border-radius: 8px;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             outline: none;
+            cursor: pointer;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        .control-select:focus, .control-input:focus {
+        .control-select:focus {
             border-color: var(--accent-blue);
             box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
-        }
-
-        .search-container {
-            flex-grow: 1;
-            min-width: 240px;
-        }
-
-        .search-container .control-input {
-            width: 100%;
         }
 
         .btn-group {
@@ -236,7 +153,7 @@
             background: var(--bg-card);
             border: none;
             color: var(--text-secondary);
-            padding: 8px 14px;
+            padding: 7px 13px;
             font-size: 0.82rem;
             cursor: pointer;
             transition: background 0.15s, color 0.15s;
@@ -261,7 +178,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--text-secondary);
             cursor: pointer;
             user-select: none;
@@ -274,26 +191,207 @@
             cursor: pointer;
         }
 
+        /* Engine Multi-Select Checkbox Pills */
+        .engine-pills-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-top: 1px solid rgba(46, 56, 70, 0.6);
+            padding-top: 10px;
+        }
+
+        .engine-pills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .engine-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s ease;
+        }
+
+        .engine-pill input[type="checkbox"] {
+            display: none;
+        }
+
+        .engine-pill .pill-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--pill-color, var(--accent-blue));
+            opacity: 0.35;
+            transition: opacity 0.15s, transform 0.15s;
+        }
+
+        .engine-pill.active {
+            background: rgba(88, 166, 255, 0.12);
+            border-color: var(--pill-color, var(--accent-blue));
+            color: var(--text-primary);
+        }
+
+        .engine-pill.active .pill-dot {
+            opacity: 1;
+            transform: scale(1.25);
+        }
+
+        .engine-pill:hover {
+            border-color: var(--pill-color, var(--accent-blue));
+            color: var(--text-primary);
+        }
+
+        .btn-group-mini {
+            display: inline-flex;
+            gap: 4px;
+            margin-left: 6px;
+        }
+
+        .btn-mini {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-mini:hover {
+            background: rgba(88, 166, 255, 0.15);
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+        }
+
         .baseline-status-note {
             background: rgba(88, 166, 255, 0.08);
             border: 1px solid rgba(88, 166, 255, 0.25);
             border-radius: 8px;
-            padding: 10px 16px;
+            padding: 9px 14px;
             margin-bottom: 20px;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--accent-blue);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        /* Table Section */
+        /* Stat Cards */
+        .stat-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-card-title {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 6px;
+            color: var(--text-primary);
+        }
+
+        .stat-card-subtitle {
+            font-size: 0.78rem;
+            color: var(--accent-green);
+            margin-top: 4px;
+        }
+
+        .engine-legend {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-bottom: 25px;
+        }
+
+        @media (min-width: 1100px) {
+            .charts-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .chart-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 380px;
+            width: 100%;
+        }
+
+        .chart-card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 14px;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Table Section - Full Width Responsive */
         .table-section {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 24px;
+            padding: 20px 24px;
             margin-bottom: 30px;
+            width: 100%;
             overflow-x: auto;
         }
 
@@ -301,25 +399,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             flex-wrap: wrap;
             gap: 10px;
         }
 
         .table-header-row h2 {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             color: var(--text-primary);
         }
 
         .table-stats-count {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--text-secondary);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
+            font-size: 0.86rem;
             text-align: left;
         }
 
@@ -327,7 +425,7 @@
             background: var(--bg-card);
             color: var(--text-secondary);
             font-weight: 600;
-            padding: 12px 16px;
+            padding: 10px 12px;
             border-bottom: 2px solid var(--border-color);
             white-space: nowrap;
         }
@@ -345,8 +443,8 @@
 
         .sort-icon {
             display: inline-block;
-            margin-left: 5px;
-            font-size: 0.75rem;
+            margin-left: 4px;
+            font-size: 0.72rem;
             opacity: 0.4;
         }
 
@@ -361,7 +459,7 @@
         }
 
         td {
-            padding: 12px 16px;
+            padding: 9px 12px;
             border-bottom: 1px solid var(--border-color);
             color: var(--text-primary);
         }
@@ -376,10 +474,11 @@
 
         .badge {
             display: inline-block;
-            padding: 3px 8px;
+            padding: 2px 7px;
             border-radius: 12px;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .badge-pass {
@@ -415,7 +514,7 @@
             color: var(--accent-green) !important;
             background: rgba(63, 185, 80, 0.08);
             border-radius: 6px;
-            padding: 4px 6px;
+            padding: 3px 6px;
         }
 
         .empty-results {
@@ -429,7 +528,7 @@
             text-align: center;
             padding: 20px;
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             border-top: 1px solid var(--border-color);
         }
     </style>
@@ -447,6 +546,45 @@
             </div>
         </header>
 
+        <!-- Frozen Sticky Controls Bar at Top -->
+        <div class="sticky-controls-bar">
+            <div class="controls-row">
+                <div class="control-item">
+                    <label for="baseline-select" class="control-label">Baseline Engine:</label>
+                    <select id="baseline-select" class="control-select"></select>
+                </div>
+
+                <div class="control-item">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="always-show-baseline">
+                        <span>Always show baseline</span>
+                    </label>
+                </div>
+
+                <div class="control-item">
+                    <span class="control-label">View:</span>
+                    <div class="btn-group" id="view-mode">
+                        <button class="btn-toggle active" data-view="flat">Detailed List</button>
+                        <button class="btn-toggle" data-view="matrix">Comparison Matrix</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Engine Multi-Select Checkboxes Row -->
+            <div class="engine-pills-row">
+                <span class="control-label">Compare Engines:</span>
+                <div class="engine-pills-container" id="engine-pills-container"></div>
+                <div class="btn-group-mini">
+                    <button id="btn-select-all" class="btn-mini">All</button>
+                    <button id="btn-select-engines" class="btn-mini">Engines</button>
+                    <button id="btn-select-runtimes" class="btn-mini">Runtimes</button>
+                    <button id="btn-select-none" class="btn-mini">None</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="baseline-status-note" class="baseline-status-note" style="display: none;"></div>
+
         <div class="stat-cards">
             <div class="card">
                 <div class="stat-card-title">Active Engines</div>
@@ -456,7 +594,7 @@
             <div class="card">
                 <div class="stat-card-title">Benchmarks Evaluated</div>
                 <div class="stat-card-value" id="card-bench-count">-</div>
-                <div class="stat-card-subtitle" id="card-bench-count-sub">Covering JIT, Stack, Heap, Strings</div>
+                <div class="stat-card-subtitle">Covering JIT, Stack, Heap, Strings</div>
             </div>
             <div class="card">
                 <div class="stat-card-title">Checksum Parity</div>
@@ -486,44 +624,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Interactive Controls Bar -->
-        <div class="controls-bar">
-            <div class="control-item">
-                <label for="baseline-select" class="control-label">Baseline:</label>
-                <select id="baseline-select" class="control-select"></select>
-            </div>
-
-            <div class="control-item">
-                <span class="control-label">Target Type:</span>
-                <div class="btn-group" id="type-filter">
-                    <button class="btn-toggle active" data-type="all">All</button>
-                    <button class="btn-toggle" data-type="engine">Pure Engines</button>
-                    <button class="btn-toggle" data-type="runtime">Runtimes</button>
-                </div>
-            </div>
-
-            <div class="control-item">
-                <label class="checkbox-container">
-                    <input type="checkbox" id="always-show-baseline">
-                    <span>Always show baseline</span>
-                </label>
-            </div>
-
-            <div class="control-item search-container">
-                <input type="text" id="table-search" class="control-input" placeholder="🔍 Search benchmarks, categories, authors, engines...">
-            </div>
-
-            <div class="control-item">
-                <span class="control-label">View:</span>
-                <div class="btn-group" id="view-mode">
-                    <button class="btn-toggle active" data-view="flat">Detailed List</button>
-                    <button class="btn-toggle" data-view="matrix">Comparison Matrix</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="baseline-status-note" class="baseline-status-note" style="display: none;"></div>
 
         <!-- Table Section -->
         <div class="table-section">
@@ -559,7 +659,7 @@
             </table>
 
             <div id="empty-state" class="empty-results" style="display: none;">
-                No benchmarks or engines match your current filter and search query.
+                No engines selected. Check at least one engine in the top bar to compare results.
             </div>
         </div>
 
@@ -574,7 +674,6 @@
         document.addEventListener("DOMContentLoaded", () => {
             if (!reportData) return;
 
-            // Extract metadata
             const engines = reportData.engines || [];
             const benchmarks = reportData.benchmarks || [];
             const results = reportData.results || {};
@@ -637,16 +736,15 @@
                 legendContainer.appendChild(item);
             });
 
-            // State
+            // Application State
             let currentBaselineId = config.baseline || (engines.some(e => e.id === "v8_turbofan") ? "v8_turbofan" : engines[0]?.id);
-            let currentTypeFilter = "all";
+            let selectedEngines = new Set(engines.map(e => e.id)); // All selected by default
             let alwaysShowBaseline = false;
-            let currentSearch = "";
             let currentView = "flat";
             let sortCol = "benchmark";
             let sortAsc = true;
 
-            // Populate Baseline Selector
+            // Populate Baseline Selector Dropdown
             const baselineSelect = document.getElementById("baseline-select");
             engines.forEach(e => {
                 const opt = document.createElement("option");
@@ -657,21 +755,94 @@
                 baselineSelect.appendChild(opt);
             });
 
+            // Populate Engine Checkbox Pills
+            const pillsContainer = document.getElementById("engine-pills-container");
+            engines.forEach(e => {
+                const label = document.createElement("label");
+                label.className = "engine-pill active";
+                label.style.setProperty("--pill-color", e.color || "#58a6ff");
+
+                const cb = document.createElement("input");
+                cb.type = "checkbox";
+                cb.value = e.id;
+                cb.checked = true;
+
+                const dot = document.createElement("span");
+                dot.className = "pill-dot";
+
+                const text = document.createElement("span");
+                text.className = "pill-name";
+                text.textContent = e.name;
+
+                label.appendChild(cb);
+                label.appendChild(dot);
+                label.appendChild(text);
+
+                cb.addEventListener("change", () => {
+                    if (cb.checked) {
+                        selectedEngines.add(e.id);
+                        label.classList.add("active");
+                    } else {
+                        selectedEngines.delete(e.id);
+                        label.classList.remove("active");
+                    }
+                    renderAll();
+                });
+
+                pillsContainer.appendChild(label);
+            });
+
+            function isEngineVisible(eId) {
+                if (selectedEngines.has(eId)) return true;
+                if (alwaysShowBaseline && eId === currentBaselineId) return true;
+                return false;
+            }
+
+            // Batch selection buttons
+            function updatePillStyles() {
+                pillsContainer.querySelectorAll(".engine-pill").forEach(label => {
+                    const cb = label.querySelector("input");
+                    cb.checked = selectedEngines.has(cb.value);
+                    if (cb.checked) {
+                        label.classList.add("active");
+                    } else {
+                        label.classList.remove("active");
+                    }
+                });
+            }
+
+            document.getElementById("btn-select-all").addEventListener("click", () => {
+                selectedEngines = new Set(engines.map(e => e.id));
+                updatePillStyles();
+                renderAll();
+            });
+
+            document.getElementById("btn-select-engines").addEventListener("click", () => {
+                selectedEngines = new Set(engines.filter(e => e.type === "engine").map(e => e.id));
+                updatePillStyles();
+                renderAll();
+            });
+
+            document.getElementById("btn-select-runtimes").addEventListener("click", () => {
+                selectedEngines = new Set(engines.filter(e => e.type === "runtime").map(e => e.id));
+                updatePillStyles();
+                renderAll();
+            });
+
+            document.getElementById("btn-select-none").addEventListener("click", () => {
+                selectedEngines.clear();
+                updatePillStyles();
+                renderAll();
+            });
+
             // Initialize Charts
             const chartLabels = benchmarks.map(b => b.name);
-            const datasetsTime = engines.map(e => ({
-                label: e.name,
-                backgroundColor: e.color,
-                borderColor: e.color,
-                borderWidth: 1,
-                data: benchmarks.map(b => results[b.id]?.[e.id]?.mean || 0)
-            }));
 
-            new Chart(document.getElementById("timeChart"), {
+            const timeChart = new Chart(document.getElementById("timeChart"), {
                 type: "bar",
                 data: {
                     labels: chartLabels,
-                    datasets: datasetsTime
+                    datasets: []
                 },
                 options: {
                     responsive: true,
@@ -713,11 +884,22 @@
                 }
             });
 
-            function updateSpeedupChart() {
+            function updateCharts() {
+                const visibleEngines = engines.filter(e => isEngineVisible(e.id));
+
+                timeChart.data.datasets = visibleEngines.map(e => ({
+                    label: e.name,
+                    backgroundColor: e.color,
+                    borderColor: e.color,
+                    borderWidth: 1,
+                    data: benchmarks.map(b => results[b.id]?.[e.id]?.mean || 0)
+                }));
+                timeChart.update();
+
                 const baseEng = engines.find(e => e.id === currentBaselineId);
                 const baseName = baseEng ? baseEng.name : currentBaselineId;
 
-                speedupChart.data.datasets = engines.map(e => ({
+                speedupChart.data.datasets = visibleEngines.map(e => ({
                     label: e.name,
                     backgroundColor: e.color,
                     borderColor: e.color,
@@ -743,7 +925,6 @@
                 const baseEng = engines.find(e => e.id === currentBaselineId);
                 const baseName = baseEng ? baseEng.name : currentBaselineId;
 
-                // Build flat dataset
                 const rows = [];
                 benchmarks.forEach(b => {
                     const bRes = results[b.id] || {};
@@ -751,6 +932,8 @@
                     const refChecksum = bRes[currentBaselineId]?.checksum || bRes[engines[0]?.id]?.checksum;
 
                     engines.forEach(e => {
+                        if (!isEngineVisible(e.id)) return;
+
                         const r = bRes[e.id];
                         if (!r) return;
 
@@ -769,40 +952,18 @@
                     });
                 });
 
-                // Apply Filters
-                const q = currentSearch.trim().toLowerCase();
-                const filtered = rows.filter(item => {
-                    const textMatch = !q ||
-                        item.b.name.toLowerCase().includes(q) ||
-                        item.b.category.toLowerCase().includes(q) ||
-                        (item.b.author || '').toLowerCase().includes(q) ||
-                        item.e.name.toLowerCase().includes(q) ||
-                        (item.e.engine_backend || '').toLowerCase().includes(q);
-
-                    const typeMatch = (currentTypeFilter === "all") || (item.e.type === currentTypeFilter);
-
-                    if (textMatch && typeMatch) return true;
-
-                    // Always show baseline option
-                    if (alwaysShowBaseline && item.isBaseline && textMatch) {
-                        return true;
-                    }
-
-                    return false;
-                });
-
                 // Update baseline indicator note
                 const noteEl = document.getElementById("baseline-status-note");
-                const baselineInView = filtered.some(i => i.isBaseline);
-                if (!baselineInView && filtered.length > 0) {
-                    noteEl.innerHTML = `ℹ️ <strong>Baseline:</strong> Relative metrics calculated against <strong>${baseName}</strong> (hidden by current target type filter).`;
+                const baselineInView = isEngineVisible(currentBaselineId);
+                if (!baselineInView && rows.length > 0) {
+                    noteEl.innerHTML = `ℹ️ <strong>Baseline Notice:</strong> Relative metrics are calculated against <strong>${baseName}</strong> (unselected in compare checklist).`;
                     noteEl.style.display = "flex";
                 } else {
                     noteEl.style.display = "none";
                 }
 
                 // Sorting
-                filtered.sort((a, b) => {
+                rows.sort((a, b) => {
                     let res = 0;
                     switch (sortCol) {
                         case "benchmark":
@@ -845,7 +1006,7 @@
                 });
 
                 // Render Rows
-                filtered.forEach(item => {
+                rows.forEach(item => {
                     const tr = document.createElement("tr");
                     if (item.isBaseline) {
                         tr.className = "row-is-baseline";
@@ -884,15 +1045,14 @@
                     tbody.appendChild(tr);
                 });
 
-                // Stats Count & Empty state
                 const emptyEl = document.getElementById("empty-state");
                 const countEl = document.getElementById("table-stats-count");
-                if (filtered.length === 0) {
+                if (rows.length === 0) {
                     emptyEl.style.display = "block";
                     countEl.textContent = `0 results found`;
                 } else {
                     emptyEl.style.display = "none";
-                    countEl.textContent = `Showing ${filtered.length} measurements across ${benchmarks.length} workloads`;
+                    countEl.textContent = `Showing ${rows.length} measurements across ${benchmarks.length} workloads`;
                 }
             }
 
@@ -903,14 +1063,8 @@
                 thead.innerHTML = "";
                 tbody.innerHTML = "";
 
-                // Determine visible engines
-                let visibleEngines = engines.filter(e => (currentTypeFilter === "all") || (e.type === currentTypeFilter));
-                if (alwaysShowBaseline && !visibleEngines.some(e => e.id === currentBaselineId)) {
-                    const baseEng = engines.find(e => e.id === currentBaselineId);
-                    if (baseEng) visibleEngines.unshift(baseEng);
-                }
+                const visibleEngines = engines.filter(e => isEngineVisible(e.id));
 
-                // Table Header
                 const trHead = document.createElement("tr");
                 trHead.innerHTML = `
                     <th>Benchmark</th>
@@ -924,21 +1078,10 @@
                 });
                 thead.appendChild(trHead);
 
-                // Filter benchmarks
-                const q = currentSearch.trim().toLowerCase();
-                const filteredBench = benchmarks.filter(b => {
-                    if (!q) return true;
-                    return b.name.toLowerCase().includes(q) ||
-                           b.category.toLowerCase().includes(q) ||
-                           (b.author || '').toLowerCase().includes(q);
-                });
-
-                // Populate Rows
-                filteredBench.forEach(b => {
+                benchmarks.forEach(b => {
                     const bRes = results[b.id] || {};
                     const baseMean = bRes[currentBaselineId]?.mean || 1.0;
 
-                    // Find fastest engine for this workload
                     let fastestMean = Infinity;
                     let fastestId = null;
                     visibleEngines.forEach(e => {
@@ -991,7 +1134,7 @@
                 });
 
                 const countEl = document.getElementById("table-stats-count");
-                countEl.textContent = `Showing ${filteredBench.length} benchmarks × ${visibleEngines.length} engines`;
+                countEl.textContent = `Showing ${benchmarks.length} benchmarks × ${visibleEngines.length} engines`;
             }
 
             function renderTables() {
@@ -1006,20 +1149,15 @@
                 }
             }
 
+            function renderAll() {
+                updateCharts();
+                renderTables();
+            }
+
             // Event Listeners
             baselineSelect.addEventListener("change", (e) => {
                 currentBaselineId = e.target.value;
-                updateSpeedupChart();
-                renderTables();
-            });
-
-            document.querySelectorAll("#type-filter .btn-toggle").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    document.querySelectorAll("#type-filter .btn-toggle").forEach(b => b.classList.remove("active"));
-                    btn.classList.add("active");
-                    currentTypeFilter = btn.dataset.type;
-                    renderTables();
-                });
+                renderAll();
             });
 
             document.querySelectorAll("#view-mode .btn-toggle").forEach(btn => {
@@ -1032,16 +1170,10 @@
             });
 
             const alwaysShowCheckbox = document.getElementById("always-show-baseline");
-            alwaysShowCheckbox.checked = false; // Disabled by default
+            alwaysShowCheckbox.checked = false;
             alwaysShowCheckbox.addEventListener("change", (e) => {
                 alwaysShowBaseline = e.target.checked;
-                renderTables();
-            });
-
-            const searchInput = document.getElementById("table-search");
-            searchInput.addEventListener("input", (e) => {
-                currentSearch = e.target.value;
-                renderTables();
+                renderAll();
             });
 
             // Sorting event listeners on flat table headers
@@ -1052,10 +1184,9 @@
                         sortAsc = !sortAsc;
                     } else {
                         sortCol = col;
-                        sortAsc = (col === "speedup") ? false : true; // speedup default descending
+                        sortAsc = (col === "speedup") ? false : true;
                     }
 
-                    // Update UI arrows
                     document.querySelectorAll("#summary-table th.sortable").forEach(h => {
                         h.classList.remove("asc", "desc");
                         h.querySelector(".sort-icon").textContent = "↕";
@@ -1068,9 +1199,8 @@
                 });
             });
 
-            // Initial Renders
-            updateSpeedupChart();
-            renderTables();
+            // Initial Render
+            renderAll();
         });
     </script>
 </body>
