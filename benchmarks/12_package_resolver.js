@@ -1,7 +1,8 @@
 // Benchmark 12: Package Dependency Tree & SemVer Resolver
 // -------------------------------------------------------------------------------------
-// Adapted from the Bun Benchmark Suite (https://github.com/oven-sh/bun/tree/main/bench)
-// Originally designed & created by Jarred Sumner and the Oven team (oven-sh/bun).
+// Source & Attribution: Bun Benchmark Suite (https://github.com/oven-sh/bun/tree/main/bench)
+// Upstream Reference: bench/package-resolve / bench/install
+// Author: Jarred Sumner (@Jarred-Sumner) and the Oven team (oven-sh)
 // Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
 // -------------------------------------------------------------------------------------
 // Tests DAG dependency graph building, SemVer range matching, deduplication, and topological sort.

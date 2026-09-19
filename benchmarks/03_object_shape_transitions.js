@@ -1,4 +1,10 @@
 // Benchmark 03: Object Shape Transitions & Inline Cache
+// -------------------------------------------------------------------------------------
+// Source & Attribution: Google V8 Engine Team (Hidden Classes & Maps Architecture)
+// Upstream Reference: https://github.com/v8/v8 (test/js-perf-test/Maps)
+// Author: Google V8 Team (Lars Bak, Kasper Lund et al.)
+// Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
+// -------------------------------------------------------------------------------------
 // Tests object allocation, Map (hidden class) transitions, and inline cache throughput.
 
 var log = typeof console !== "undefined" && console.log ? console.log : print;

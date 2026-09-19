@@ -1,4 +1,10 @@
 // Benchmark 07: Cryptographic Hashing & Bitwise Permutation
+// -------------------------------------------------------------------------------------
+// Source & Attribution: Fowler–Noll–Vo Hashing Algorithm (FNV-1a)
+// Upstream Reference: https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
+// Author: Glenn Fowler, Landon Curt Noll, and Kiem-Phong Vo
+// Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
+// -------------------------------------------------------------------------------------
 // Tests bitwise manipulation, integer multiplication, and hashing avalanche effect.
 
 var log = typeof console !== "undefined" && console.log ? console.log : print;

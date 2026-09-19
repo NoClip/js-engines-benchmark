@@ -306,6 +306,17 @@ def main():
         print(f"    * {b.stem}")
 
     # 3. Execution Phase
+    sources_manifest_path = BENCHMARKS_DIR / "sources.json"
+    sources_map = {}
+    if sources_manifest_path.exists():
+        try:
+            with open(sources_manifest_path, "r", encoding="utf-8") as f:
+                sources_data = json.load(f)
+                for item in sources_data:
+                    sources_map[item["id"]] = item
+        except Exception:
+            pass
+
     bench_meta_list = []
     results = {}
 
@@ -367,10 +378,13 @@ def main():
                 }
                 print(f"FAILED! ({last_err})")
 
+        source_item = sources_map.get(b_id, {})
+        author = source_item.get("author", "Standard Benchmark")
         bench_meta_list.append({
             "id": b_id,
             "name": b_id,
-            "category": category
+            "category": category,
+            "author": author
         })
 
     # 4. Checksum Parity Validation & Results Summary Table
@@ -404,7 +418,7 @@ def main():
             data = b_res.get(e_id, {})
             if data.get("error"):
                 print(header_fmt.format(b_id, eng["name"][:26], e_type, "ERR", "ERR", "ERR", "N/A", "FAIL"))
-                summary_md_rows.append(f"| `{b_id}` | {eng['name']} | **{e_type}** | {e_backend} | ERR | ERR | - | FAIL |")
+                summary_md_rows.append(f"| `{b_id}` | {b_meta.get('author', 'Standard')} | {eng['name']} | **{e_type}** | {e_backend} | ERR | ERR | - | FAIL |")
                 continue
 
             mean = data["mean"]
@@ -422,7 +436,7 @@ def main():
 
             csum_status = "PASS" if csum == ref_checksum else f"MISMATCH ({csum})"
             print(header_fmt.format(b_id, eng["name"][:26], e_type, f"{mean:.2f}", f"{median:.2f}", f"±{std_dev:.2f}", rel_str, csum_status))
-            summary_md_rows.append(f"| `{b_id}` | {eng['name']} | **{e_type}** | {e_backend} | {mean:.2f} ms | {median:.2f} ms | {rel_str} | `{csum}` ({csum_status}) |")
+            summary_md_rows.append(f"| `{b_id}` | {b_meta.get('author', 'Standard')} | {eng['name']} | **{e_type}** | {e_backend} | {mean:.2f} ms | {median:.2f} ms | {rel_str} | `{csum}` ({csum_status}) |")
 
     # 5. Export JSON
     export_payload = {
@@ -446,8 +460,8 @@ def main():
     with open(summary_md_path, "w", encoding="utf-8") as f:
         f.write("# JavaScript Engines Benchmark Summary\n\n")
         f.write(f"Generated on {time.ctime()} with {args.iterations} measurement passes and {args.warmup} warmups.\n\n")
-        f.write("| Benchmark | Target | Type | VM Backend | Mean Duration | Median Duration | Relative vs Baseline | Mathematical Checksum |\n")
-        f.write("|:---|:---|:---:|:---|:---:|:---:|:---:|:---:|\n")
+        f.write("| Benchmark | Author / Origin | Target | Type | VM Backend | Mean Duration | Median Duration | Relative vs Baseline | Mathematical Checksum |\n")
+        f.write("|:---|:---|:---|:---:|:---|:---:|:---:|:---:|:---:|\n")
         for row in summary_md_rows:
             f.write(row + "\n")
     print(f"[+] Summary markdown written to: {summary_md_path}")

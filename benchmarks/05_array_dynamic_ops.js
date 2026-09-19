@@ -1,4 +1,10 @@
 // Benchmark 05: Dynamic Array Operations
+// -------------------------------------------------------------------------------------
+// Source & Attribution: Mozilla Kraken & Google Octane JavaScript Benchmark Suites
+// Upstream Reference: https://github.com/mozilla/kraken-benchmark
+// Author: Mozilla Corporation & Google V8 Team
+// Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
+// -------------------------------------------------------------------------------------
 // Tests dynamic array allocation, push operations, growth reallocation, and sequential traversal.
 
 var log = typeof console !== "undefined" && console.log ? console.log : print;

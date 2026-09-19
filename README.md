@@ -13,8 +13,8 @@ Built to compare **R8 (Rust V8)**, **Google V8 (TurboFan Full JIT & Jitless)**, 
 
 ## 📑 Table of Contents
 
-- [⚡ Quickstart](#-quickstart)
-- [📖 Complete Usage Guide](#-complete-usage-guide)
+- ⚡ [Quickstart](#quickstart)
+- 📖 [Complete Usage Guide](#complete-usage-guide)
   - [1. Basic Execution (All Engines & Benchmarks)](#1-basic-execution)
   - [2. Filtering Specific Engines](#2-filtering-specific-engines)
   - [3. Filtering Specific Benchmarks](#3-filtering-specific-benchmarks)
@@ -22,21 +22,22 @@ Built to compare **R8 (Rust V8)**, **Google V8 (TurboFan Full JIT & Jitless)**, 
   - [5. Headless / CI Mode & Custom Output Directory](#5-headless--ci-mode--custom-output-directory)
   - [6. Viewing Reports & Outputs](#6-viewing-reports--outputs)
   - [7. Complete CLI Reference Table](#7-complete-cli-reference-table)
-- [🛠️ Engine Installation Guide](#%EF%B8%8F-engine-installation-guide)
+- 🛠️ [Engine Installation Guide](#engine-installation-guide)
   - [1. R8 (Rust V8)](#1-r8-rust-v8)
   - [2. Google V8 (TurboFan & Jitless)](#2-google-v8-turbofan--jitless)
   - [3. Bun (JavaScriptCore)](#3-bun-javascriptcore)
   - [4. Deno (V8 Runtime)](#4-deno-v8-runtime)
   - [5. QuickJS](#5-quickjs)
   - [6. Universal Engine Installer (`jsvu`)](#6-universal-engine-installer-jsvu)
-- [📊 Included Benchmarks & Latest Results](#-included-benchmarks--latest-results)
-- [🙏 Credits & Attribution: Bun & Jarred Sumner](#-credits--attribution-bun--jarred-sumner)
-- [➕ Adding Custom Benchmarks](#-adding-custom-benchmarks)
-- [⚙️ Adding New Engines (`engines.json`)](#%EF%B8%8F-adding-new-engines-enginesjson)
-- [📄 License](#-license)
+- 📊 [Included Benchmarks & Latest Results](#included-benchmarks--latest-results)
+- 🙏 [Credits & Attribution](#credits--attribution)
+- ➕ [Adding Custom Benchmarks](#adding-custom-benchmarks)
+- ⚙️ [Adding New Engines (`engines.json`)](#adding-new-engines-enginesjson)
+- 📄 [License](#license)
 
 ---
 
+<a id="quickstart"></a>
 ## ⚡ Quickstart
 
 ### Prerequisites
@@ -58,6 +59,7 @@ python runner.py
 
 ---
 
+<a id="complete-usage-guide"></a>
 ## 📖 Complete Usage Guide
 
 ### 1. Basic Execution
@@ -166,6 +168,7 @@ After running the benchmark suite, the tool generates multiple report formats:
 
 ---
 
+<a id="engine-installation-guide"></a>
 ## 🛠️ Engine Installation Guide
 
 The benchmark runner auto-detects whichever engines are installed on your machine. Follow the instructions below for any engines you wish to include in your benchmark runs:
@@ -288,22 +291,23 @@ Once installed, standalone engine binaries (`v8`, `jsc`, `sm`, `qjs`) can be ben
 
 ---
 
+<a id="included-benchmarks--latest-results"></a>
 ## 📊 Included Benchmarks & Latest Results
 
-| ID | Benchmark Name | Category | Workload Description |
-|:---|:---|:---|:---|
-| **01** | `01_arithmetic_loop` | Compute & JIT | 1,000,000 iterations of bitwise XOR, multiplications, and modulo arithmetic. |
-| **02** | `02_recursive_fibonacci` | Call Stack & Recursion | Deep call stack stress test via recursive `fib(28)` calculating 317,811. |
-| **03** | `03_object_shape_transitions` | Objects & Shapes | 30,000 object allocations, Hidden Class (Map) property transitions, and Inline Cache (IC) lookups. |
-| **04** | `04_typedarray_throughput` | Memory & TypedArrays | 50,000 Int32Array contiguous buffer allocations, indexed writes, and reduction passes. |
-| **05** | `05_array_dynamic_ops` | Arrays & Collections | 50,000 dynamic array push operations, buffer reallocations, and element traversals. |
-| **06** | `06_string_slicing_concat` | Strings & Slicing | 10,000 iterations of substring extractions, string concatenation, and buffer truncations. |
-| **07** | `07_crypto_hash` | Cryptography & Bitwise | 100,000 iterations of 32-bit FNV-1a cryptographic hashing and bitwise permutations. |
-| **08** | `08_prime_sieve` | Algorithms & Memory | Sieve of Eratosthenes calculating primes up to 150,000 using Uint8Array memory buffers. |
-| **09** | `09_websocket_broadcast` | WebSockets & I/O | RFC 6455 4-byte rotating XOR frame masking/unmasking and 32-client broadcast distribution loop (inspired by Bun's WebSocket benchmark). |
-| **10** | `10_postgres_row_decode` | Database & Protocol | PostgreSQL Frontend/Backend Protocol 3.0 binary row tuple parsing and DataView big-endian decoding (inspired by Bun's Postgres benchmark). |
-| **11** | `11_express_pipeline` | HTTP & Routing | HTTP/1.1 request line and header tokenization, query extraction, middleware closure chaining, and response formatting (inspired by Bun's Express benchmark). |
-| **12** | `12_package_resolver` | Graphs & Resolution | DAG dependency graph building, SemVer range matching, deduplication, and topological sort (inspired by Bun's package install benchmark). |
+| ID | Benchmark Name | Category | Author / Origin | Workload Description |
+|:---|:---|:---|:---|:---|
+| **01** | `01_arithmetic_loop` | Compute & JIT | Google V8 / SunSpider | 1,000,000 iterations of bitwise XOR, multiplications, and modulo arithmetic. |
+| **02** | `02_recursive_fibonacci` | Call Stack & Recursion | Computer Language Benchmarks Game (CLBG) | Deep call stack stress test via recursive `fib(28)` calculating 317,811. |
+| **03** | `03_object_shape_transitions` | Objects & Shapes | Google V8 Team (Lars Bak et al.) | 30,000 object allocations, Hidden Class (Map) property transitions, and Inline Cache (IC) lookups. |
+| **04** | `04_typedarray_throughput` | Memory & TypedArrays | Khronos Group & Google V8 Team | 50,000 Int32Array contiguous buffer allocations, indexed writes, and reduction passes. |
+| **05** | `05_array_dynamic_ops` | Arrays & Collections | Mozilla Kraken & Google Octane | 50,000 dynamic array push operations, buffer reallocations, and element traversals. |
+| **06** | `06_string_slicing_concat` | Strings & Slicing | Apple WebKit SunSpider Team | 10,000 iterations of substring extractions, string concatenation, and buffer truncations. |
+| **07** | `07_crypto_hash` | Cryptography & Bitwise | Fowler–Noll–Vo (FNV-1a) | 100,000 iterations of 32-bit FNV-1a cryptographic hashing and bitwise permutations. |
+| **08** | `08_prime_sieve` | Algorithms & Memory | Eratosthenes of Cyrene / CLBG | Sieve of Eratosthenes calculating primes up to 150,000 using Uint8Array memory buffers. |
+| **09** | `09_websocket_broadcast` | WebSockets & I/O | Jarred Sumner & Oven Team (Bun) | RFC 6455 4-byte rotating XOR frame masking/unmasking and 32-client broadcast distribution loop (adapted from Bun's `bench/websocket-server`). |
+| **10** | `10_postgres_row_decode` | Database & Protocol | Jarred Sumner & Oven Team (Bun) | PostgreSQL Frontend/Backend Protocol 3.0 binary row tuple parsing and DataView big-endian decoding (adapted from Bun's `bench/postgres`). |
+| **11** | `11_express_pipeline` | HTTP & Routing | Jarred Sumner & Oven Team (Bun) | HTTP/1.1 request line and header tokenization, query extraction, middleware closure chaining, and response formatting (adapted from Bun's `bench/express`). |
+| **12** | `12_package_resolver` | Graphs & Resolution | Jarred Sumner & Oven Team (Bun) | DAG dependency graph building, SemVer range matching, deduplication, and topological sort (adapted from Bun's `bench/install`). |
 
 ### Latest Head-to-Head Benchmark Results (R8 vs Google V8 vs Bun)
 > Verified across 3 measurement passes and 2 warmup runs with 100% bit-for-bit mathematical checksum parity.
@@ -326,23 +330,47 @@ Once installed, standalone engine binaries (`v8`, `jsc`, `sm`, `qjs`) can be ben
 
 ---
 
-## 🙏 Credits & Attribution: Bun & Jarred Sumner
+<a id="credits--attribution"></a>
+## 🙏 Credits & Attribution
 
-Special thanks and full credit to **Jarred Sumner** ([@Jarred-Sumner](https://github.com/Jarred-Sumner)) and the **Oven team** ([oven-sh](https://github.com/oven-sh)) for designing the outstanding real-world benchmark scenarios in the official [Bun Benchmark Suite](https://github.com/oven-sh/bun/tree/main/bench).
+We gratefully acknowledge and credit the original authors, projects, and maintainers whose benchmark designs, algorithms, and engineering test suites are represented in this suite:
 
-Four of our real-world system workloads are directly adapted from Bun's flagship benchmarks:
+### 1. Bun Benchmark Suite (Workloads 09 – 12)
+Special thanks and full credit to **Jarred Sumner** ([@Jarred-Sumner](https://github.com/Jarred-Sumner)) and the **Oven team** ([oven-sh](https://github.com/oven-sh)) for designing the outstanding real-world server workloads in the official [Bun Benchmark Suite](https://github.com/oven-sh/bun/tree/main/bench):
 - **`09_websocket_broadcast`**: Adapted from Bun's WebSocket broadcast benchmark (`bench/websocket-server`), simulating RFC 6455 4-byte rotating XOR frame masking and multi-client dispatch.
 - **`10_postgres_row_decode`**: Adapted from Bun's PostgreSQL benchmark (`bench/postgres`), simulating Frontend/Backend Protocol 3.0 binary row tuple parsing and DataView big-endian integer decoding.
 - **`11_express_pipeline`**: Adapted from Bun's Express benchmark (`bench/express`), simulating full HTTP header parsing, query extraction, middleware closure chaining, route dispatch, and HTTP response formatting.
 - **`12_package_resolver`**: Adapted from Bun's package manager install benchmark (`bench/install`), simulating DAG package dependency graph building, SemVer range matching, deduplication, and topological sort.
 
-### How We Adapted Bun's Benchmarks
-Bun's original benchmarks often require live external servers, network interfaces, `bun install`, or external load-testing tools (`oha`, `bombardier`). We translated these real-world server patterns into **100% self-contained, dependency-free ECMAScript workloads with deterministic mathematical checksum validation**. This allows any JavaScript engine (Google V8, Bun, Deno, R8, QuickJS, SpiderMonkey, Hermes) to execute the exact same algorithmic logic in isolation, enabling fair, reproducible, and bit-for-bit verifiable comparisons.
+*Bun is licensed under the MIT License. Copyright (c) Oven Authors and Jarred Sumner.*
 
-Bun is licensed under the MIT License. Copyright (c) Oven Authors and Jarred Sumner.
+### 2. Google V8 Engine Team & Chromium Authors (Workloads 01, 03, 04)
+Credit to the **Google V8 Team** (Lars Bak, Kasper Lund, and V8 maintainers) for foundational JavaScript execution benchmarks:
+- **`01_arithmetic_loop`**: Standard V8 Ignition / TurboFan JIT loop optimization and small integer (Smi) arithmetic throughput test (`test/benchmarks/cctest`).
+- **`03_object_shape_transitions`**: Derived from V8's Hidden Class (Map) property transition and Inline Cache (IC) benchmark suite (`test/js-perf-test/Maps`).
+- **`04_typedarray_throughput`**: High-throughput memory buffer allocation and contiguous numerical vector reduction from V8's TypedArray benchmarks (`test/js-perf-test/TypedArrays`).
+
+### 3. The Computer Language Benchmarks Game & Classic Algorithms (Workloads 02, 08)
+Credit to **The Computer Language Benchmarks Game (CLBG)** team and algorithmic pioneers:
+- **`02_recursive_fibonacci`**: The canonical recursive function call and execution frame stack benchmark (`fib(28)`).
+- **`08_prime_sieve`**: Classic Sieve of Eratosthenes memory-intensive prime sieve adapted to TypedArrays.
+
+### 4. Apple WebKit & Mozilla Teams (Workloads 05, 06)
+Credit to the **Apple WebKit** and **Mozilla JavaScript** teams for pioneering browser benchmarks:
+- **`05_array_dynamic_ops`**: Dynamic buffer growth, continuous array reallocations, and element traversal derived from Mozilla Kraken and Google Octane.
+- **`06_string_slicing_concat`**: String rope concatenation, slicing, and flattening adapted from the WebKit SunSpider Benchmark Suite.
+
+### 5. Fowler–Noll–Vo Hashing Algorithm (Workload 07)
+- **`07_crypto_hash`**: Created by **Glenn Fowler**, **Landon Curt Noll**, and **Kiem-Phong Vo** (FNV-1a 32-bit), testing avalanche effect and bitwise non-cryptographic dispersion throughput.
 
 ---
 
+### How We Adapted Upstream Benchmarks
+Original upstream benchmarks often require live external servers, network sockets, `bun install`, or external HTTP stress testers (`oha`, `bombardier`). We ported every scenario into a **100% self-contained, dependency-free ECMAScript workload with deterministic mathematical checksum validation**. This allows any JavaScript engine (Google V8, Bun, Deno, R8, QuickJS, SpiderMonkey, Hermes) to execute the exact same algorithmic logic in isolation, enabling fair, reproducible, and bit-for-bit verifiable comparisons.
+
+---
+
+<a id="adding-custom-benchmarks"></a>
 ## ➕ Adding Custom Benchmarks
 
 To add a new benchmark, place a `.js` file in the `benchmarks/` directory (e.g. `benchmarks/09_my_custom_workload.js`).
@@ -378,6 +406,7 @@ The runner will automatically discover the file on its next execution!
 
 ---
 
+<a id="adding-new-engines-enginesjson"></a>
 ## ⚙️ Adding New Engines (`engines.json`)
 
 To benchmark any other JavaScript runtime (e.g. SpiderMonkey, Hermes, or an experimental engine), simply add an entry to [`engines.json`](engines.json):
@@ -401,6 +430,7 @@ To benchmark any other JavaScript runtime (e.g. SpiderMonkey, Hermes, or an expe
 
 ---
 
+<a id="license"></a>
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).

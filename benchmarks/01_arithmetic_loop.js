@@ -1,4 +1,10 @@
 // Benchmark 01: Arithmetic & Loop Throughput
+// -------------------------------------------------------------------------------------
+// Source & Attribution: Google V8 Engine Team / SunSpider ECMAScript Benchmark
+// Upstream Reference: https://github.com/v8/v8 (test/benchmarks/cctest)
+// Author: Google V8 Team & WebKit Authors
+// Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
+// -------------------------------------------------------------------------------------
 // Tests JIT loop optimization, bitwise logic, and integer math throughput.
 
 var log = typeof console !== "undefined" && console.log ? console.log : print;

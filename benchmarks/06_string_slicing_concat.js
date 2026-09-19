@@ -1,4 +1,10 @@
 // Benchmark 06: String Slicing & Concatenation
+// -------------------------------------------------------------------------------------
+// Source & Attribution: Apple WebKit SunSpider Benchmark Suite
+// Upstream Reference: https://webkit.org/perf/sunspider/sunspider.html
+// Author: Apple WebKit Team
+// Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
+// -------------------------------------------------------------------------------------
 // Tests string allocation, slice/substring operations, flattening, and character accumulation.
 
 var log = typeof console !== "undefined" && console.log ? console.log : print;

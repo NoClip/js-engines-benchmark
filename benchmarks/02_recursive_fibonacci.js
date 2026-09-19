@@ -1,4 +1,10 @@
 // Benchmark 02: Recursive Fibonacci
+// -------------------------------------------------------------------------------------
+// Source & Attribution: The Computer Language Benchmarks Game (CLBG)
+// Upstream Reference: https://benchmarksgame-team.pages.debian.net/benchmarksgame/
+// Author: Computer Language Benchmarks Game Contributors & Classic Algorithm
+// Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
+// -------------------------------------------------------------------------------------
 // Tests call stack allocation, function frame prologue/epilogue, and recursion throughput.
 
 var log = typeof console !== "undefined" && console.log ? console.log : print;

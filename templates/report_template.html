@@ -298,6 +298,7 @@
                     <tr>
                         <th>Benchmark</th>
                         <th>Category</th>
+                        <th>Author / Origin</th>
                         <th>Target</th>
                         <th>Type</th>
                         <th>VM Backend</th>
@@ -395,6 +396,7 @@
                     tr.innerHTML = `
                         <td><strong>${b.name}</strong></td>
                         <td>${b.category}</td>
+                        <td><small style="color: var(--text-secondary)">${b.author || 'Standard'}</small></td>
                         <td><span style="color: ${e.color}">${e.name}</span></td>
                         <td>${typeBadge}</td>
                         <td><small style="color: var(--text-secondary)">${e.engine_backend || 'VM'}</small></td>

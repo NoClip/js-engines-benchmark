@@ -1,7 +1,8 @@
 // Benchmark 10: PostgreSQL Binary Row Tuple Decoder
 // -------------------------------------------------------------------------------------
-// Adapted from the Bun Benchmark Suite (https://github.com/oven-sh/bun/tree/main/bench)
-// Originally designed & created by Jarred Sumner and the Oven team (oven-sh/bun).
+// Source & Attribution: Bun Benchmark Suite (https://github.com/oven-sh/bun/tree/main/bench)
+// Upstream Reference: bench/postgres
+// Author: Jarred Sumner (@Jarred-Sumner) and the Oven team (oven-sh)
 // Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
 // -------------------------------------------------------------------------------------
 // Tests binary wire protocol parsing: DataView big-endian integer decoding, column tuple extraction, and record projection.

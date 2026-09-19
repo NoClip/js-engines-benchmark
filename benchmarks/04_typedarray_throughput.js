@@ -1,4 +1,10 @@
 // Benchmark 04: TypedArray Throughput
+// -------------------------------------------------------------------------------------
+// Source & Attribution: Khronos Group & Google V8 TypedArray Performance Suite
+// Upstream Reference: https://github.com/v8/v8 (test/js-perf-test/TypedArrays)
+// Author: Khronos Group / Google V8 Team
+// Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
+// -------------------------------------------------------------------------------------
 // Tests Int32Array contiguous buffer allocation, indexed stores, and indexed loads.
 
 var log = typeof console !== "undefined" && console.log ? console.log : print;

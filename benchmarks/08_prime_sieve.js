@@ -1,4 +1,10 @@
 // Benchmark 08: Sieve of Eratosthenes
+// -------------------------------------------------------------------------------------
+// Source & Attribution: Eratosthenes of Cyrene / Computer Language Benchmarks Game
+// Upstream Reference: https://benchmarksgame-team.pages.debian.net/benchmarksgame/
+// Author: Classic Algorithm adapted for JS TypedArrays by Benchmark Contributors
+// Ported to self-contained ECMAScript with deterministic mathematical checksum validation.
+// -------------------------------------------------------------------------------------
 // Tests array buffer indexing, branch prediction, and memory-intensive prime sieve computation.
 
 var log = typeof console !== "undefined" && console.log ? console.log : print;
