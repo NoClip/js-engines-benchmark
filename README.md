@@ -54,7 +54,7 @@ python runner.py --auto-install
 python runner.py
 ```
 
-> **Zero-Permission Portable Installs**: Running `--auto-install` downloads and builds portable binaries locally into `.engines/`. No root, sudo, or administrator privileges are ever required!
+> **Zero-Permission Portable Installs**: Running `--auto-install` downloads official portable prebuilt binaries locally into `.engines/`. No compilers, build tools, root, or administrator privileges are ever required!
 
 ---
 
@@ -84,7 +84,7 @@ python runner.py --type all
 > - **JS Runtime**: Application environment bundling a JS engine with event loop, OS I/O, and Web APIs (e.g. **Bun** = WebKit JSC + Zig, **Node.js** = Google V8 + libuv, **Deno** = Google V8 + Tokio).
 
 ### 3. Automated Zero-Permission Engine Installer (`--auto-install` & `--install`)
-Never worry about manually downloading or setting up engines. The built-in provisioner downloads and builds engines locally into a portable `.engines/` directory with zero root/admin requirements:
+Never worry about manually downloading or configuring engines. The built-in provisioner downloads official prebuilt binaries locally into a portable `.engines/` directory with zero root/admin requirements:
 ```bash
 # Automatically install any missing engines/runtimes before benchmarking
 python runner.py --auto-install
@@ -175,21 +175,20 @@ The benchmark runner auto-detects whichever engines are installed on your machin
 ### 1. R8 (Rust V8)
 [R8](https://github.com/NoClip/r8) is a high-performance JavaScript & WebAssembly engine based on Google V8 version 12.8.
 
-#### How to Build:
-```bash
-# Clone R8 repository next to js-engines-benchmark
-git clone https://github.com/NoClip/r8.git
-cd r8
+#### Prebuilt Installation:
+R8 is automatically downloaded and provisioned as an official prebuilt binary directly from [GitHub Releases](https://github.com/NoClip/r8/releases):
 
-# Build all release binaries
-cargo build --release
+```bash
+# Automatically provision R8 (and all missing engines) as prebuilt binaries
+python runner.py --auto-install
+
+# Or explicitly pre-install R8 prebuilt binary
+python runner.py --install r8
 ```
-- **Binary Output**: `target/release/r8.exe` (Windows) or `target/release/r8` (Linux/macOS).
-- **Auto-Discovery**: The benchmark runner automatically searches for R8 in:
-  1. Sibling directory: `../r8/target/release/r8` (or `.exe`)
-  2. Local engine cache: `.engines/r8/r8` (or `.exe`)
-  3. Environment variable `R8_PATH` (e.g. `export R8_PATH=/path/to/r8`)
-  4. System `PATH` (`r8`)
+
+- **Prebuilt Location**: Downloaded into `.engines/r8/r8.exe` (Windows) or `.engines/r8/r8` (Linux/macOS).
+- **Zero Toolchains Required**: No Rust, Cargo, C++, or build tools needed.
+- **Manual Override**: You can also point to any existing `r8` executable via environment variable `R8_PATH` (e.g. `export R8_PATH=/path/to/r8`) or system `PATH`.
 
 ---
 

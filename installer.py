@@ -91,8 +91,8 @@ def extract_archive(archive_path, extract_dir):
         # Direct binary file
         shutil.copy2(archive_path, extract_dir)
 
-def install_engine(engine, force=False, prefer_prebuilt=False):
-    """Install or build the specified engine."""
+def install_engine(engine, force=False):
+    """Install the specified engine from official prebuilt binaries."""
     os_name, arch, platform_key = detect_platform()
     install_meta = engine.get("install")
     if not install_meta:
@@ -114,81 +114,8 @@ def install_engine(engine, force=False, prefer_prebuilt=False):
 
     print(f"[+] Provisioning engine '{engine['name']}'...")
 
-    # Strategy 1: R8 source build or release download
-    if strategy == "r8_source_or_release":
-        built = False
-        downloads = install_meta.get("downloads", {})
-        download_url = downloads.get(platform_key)
-
-        def download_and_extract_r8(url):
-            ext = ".zip" if url.endswith(".zip") else ".tar.gz"
-            tmp_archive = engine_dir / f"r8_release{ext}"
-            print(f"    [r8] Downloading official prebuilt release: {url}")
-            
-            def print_progress(cur, total):
-                pct = int(cur / total * 100)
-                sys.stdout.write(f"\r    [download] {pct}% ({cur // 1024} KB / {total // 1024} KB)")
-                sys.stdout.flush()
-
-            download_file(url, tmp_archive, progress_callback=print_progress)
-            print("\n    [extract] Extracting R8 release archive...")
-            extract_archive(tmp_archive, engine_dir)
-            if tmp_archive.exists():
-                tmp_archive.unlink()
-
-            if final_bin_path.exists():
-                print(f"    [r8] Prebuilt binary ready -> {final_bin_path}")
-                return True
-            return False
-
-        # If user explicitly requested prebuilts, download from GitHub Releases first
-        if prefer_prebuilt and download_url:
-            try:
-                built = download_and_extract_r8(download_url)
-            except Exception as e:
-                print(f"    [r8] GitHub Releases download failed ({e}), falling back to local source build...")
-
-        # If not yet built, attempt local cargo build if source repo exists
-        if not built:
-            candidates = [
-                BASE_DIR.parent / "r8",
-            ]
-            cargo_found = shutil.which("cargo")
-
-            if cargo_found:
-                for repo_path in candidates:
-                    cargo_toml = repo_path / "Cargo.toml"
-                    if cargo_toml.exists():
-                        print(f"    [r8] Found local source at {repo_path}. Building via cargo...")
-                        try:
-                            res = subprocess.run(
-                                ["cargo", "build", "--release", "--bin", "r8"],
-                                cwd=str(repo_path),
-                                capture_output=True,
-                                text=True,
-                                timeout=600
-                            )
-                            built_bin = repo_path / "target" / "release" / binary_name
-                            if res.returncode == 0 and built_bin.exists():
-                                shutil.copy2(built_bin, final_bin_path)
-                                print(f"    [r8] Build succeeded -> {final_bin_path}")
-                                built = True
-                                break
-                        except Exception as e:
-                            print(f"    [r8] Local build warning: {e}")
-
-        # If still not built and prebuilt download wasn't attempted, download from GitHub Releases
-        if not built and download_url:
-            try:
-                built = download_and_extract_r8(download_url)
-            except Exception as e:
-                print(f"    [r8] Error downloading prebuilt from GitHub: {e}")
-
-        if os_name != "windows" and final_bin_path.exists():
-            os.chmod(final_bin_path, 0o755)
-
-    # Strategy 2: Direct binary download
-    elif strategy == "direct_binary":
+    # Strategy 1: Direct binary download
+    if strategy == "direct_binary":
         downloads = install_meta.get("downloads", {})
         download_url = downloads.get(platform_key)
         if not download_url:
@@ -356,12 +283,11 @@ if __name__ == "__main__":
     with open(engines_file, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    parser = argparse.ArgumentParser(description="js-engines-benchmarks engine installer")
+    parser = argparse.ArgumentParser(description="js-engines-benchmarks engine installer (official prebuilt binaries)")
     parser.add_argument("engine", nargs="?", default="r8", help="Engine ID to install (e.g. r8, v8_standalone, sm, bun, deno, quickjs, or 'all')")
     parser.add_argument("--force", action="store_true", help="Force reinstall even if already installed")
-    parser.add_argument("--prebuilt", action="store_true", help="Prefer downloading official prebuilt binary from GitHub Releases")
     cli_args = parser.parse_args()
 
     for eng in data.get("engines", []):
         if eng["id"] == cli_args.engine or cli_args.engine == "all":
-            install_engine(eng, force=cli_args.force, prefer_prebuilt=cli_args.prebuilt)
+            install_engine(eng, force=cli_args.force)
