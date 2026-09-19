@@ -9,7 +9,7 @@
       "args": ["{file}"],
       "enabled": "auto",
       "version_args": ["--version"],
-      "description": "Google V8 Engine 100% reimplemented in Pure Safe Rust (Zero C++, Zero Dependencies)",
+      "description": "JavaScript & WebAssembly Engine based on Google V8 12.8",
       "color": "#e06c75",
       "install": {
         "strategy": "r8_source_or_release",

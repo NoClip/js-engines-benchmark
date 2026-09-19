@@ -119,7 +119,6 @@ def install_engine(engine, force=False):
         # First attempt: Check sibling source directories for cargo build
         candidates = [
             BASE_DIR.parent / "r8",
-            BASE_DIR.parent / "Chromium-Rust"
         ]
         built = False
         cargo_found = shutil.which("cargo")

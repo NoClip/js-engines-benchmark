@@ -173,7 +173,7 @@ The benchmark runner auto-detects whichever engines are installed on your machin
 ---
 
 ### 1. R8 (Rust V8)
-[R8](https://github.com/NoClip/r8) is Google V8 reimplemented in 100% Pure Safe Rust with zero C++ and zero external dependencies.
+[R8](https://github.com/NoClip/r8) is a high-performance JavaScript & WebAssembly engine based on Google V8 version 12.8.
 
 #### How to Build:
 ```bash
@@ -181,15 +181,15 @@ The benchmark runner auto-detects whichever engines are installed on your machin
 git clone https://github.com/NoClip/r8.git
 cd r8
 
-# Build the release binary
+# Build all release binaries
 cargo build --release
 ```
-- **Binary Output**: `target/release/d8.exe` (Windows) or `target/release/d8` (Linux/macOS).
+- **Binary Output**: `target/release/r8.exe` (Windows) or `target/release/r8` (Linux/macOS).
 - **Auto-Discovery**: The benchmark runner automatically searches for R8 in:
-  1. Sibling directories: `../r8/target/release/d8` (or `.exe`)
-  2. Sibling directories: `../Chromium-Rust/target/release/d8` (or `.exe`)
-  3. Environment variable `R8_PATH` (e.g. `export R8_PATH=/path/to/d8`)
-  4. System `PATH` (`d8`)
+  1. Sibling directory: `../r8/target/release/r8` (or `.exe`)
+  2. Local engine cache: `.engines/r8/r8` (or `.exe`)
+  3. Environment variable `R8_PATH` (e.g. `export R8_PATH=/path/to/r8`)
+  4. System `PATH` (`r8`)
 
 ---
 
