@@ -505,6 +505,45 @@
             color: var(--accent-orange);
         }
 
+        .matrix-engine-header {
+            height: 1px;
+            vertical-align: top !important;
+            padding: 8px 6px 8px 6px !important;
+            text-align: center;
+            white-space: normal !important;
+            min-width: 110px;
+        }
+
+        .matrix-header-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+            min-height: 64px;
+        }
+
+        .matrix-header-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 36px;
+            width: 100%;
+            line-height: 1.25;
+        }
+
+        .matrix-header-badges {
+            margin-top: auto;
+            padding-top: 6px;
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
         .eng-header-main {
             font-weight: 700;
             font-size: 0.88rem;
@@ -514,7 +553,7 @@
             font-size: 0.72rem;
             color: var(--text-secondary);
             font-weight: 400;
-            display: inline-block;
+            display: block;
             margin-top: 2px;
         }
 
@@ -535,10 +574,42 @@
 
         footer {
             text-align: center;
-            padding: 20px;
+            padding: 28px 20px 24px;
             color: var(--text-muted);
             font-size: 0.82rem;
             border-top: 1px solid var(--border-color);
+            margin-top: 20px;
+        }
+
+        .footer-brand {
+            margin-bottom: 10px;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        .footer-brand a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-brand a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-disclaimer {
+            max-width: 860px;
+            margin: 0 auto 10px;
+            font-size: 0.74rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            opacity: 0.85;
+        }
+
+        .footer-copyright {
+            font-size: 0.73rem;
+            color: var(--text-muted);
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -568,7 +639,7 @@
                 </div>
 
                 <div class="control-item">
-                    <span class="control-label">View:</span>
+                    <span class="control-label">Table View:</span>
                     <div class="btn-group" id="view-mode">
                         <button class="btn-toggle active" data-view="matrix">Comparison Matrix</button>
                         <button class="btn-toggle" data-view="flat">Detailed List</button>
@@ -579,14 +650,13 @@
             <!-- Engine Multi-Select Checkboxes Row -->
             <div class="engine-pills-row">
                 <span class="control-label">Compare Engines:</span>
-                <div class="engine-pills-container" id="engine-pills-container"></div>
-                <div class="controls-divider"></div>
-                <span class="control-label">Show:</span>
+                <span class="control-label" style="font-size: 0.76rem; opacity: 0.85; margin-left: 2px;">Show:</span>
                 <div class="btn-group">
                     <button id="btn-select-all" class="btn-toggle">All</button>
                     <button id="btn-select-engines" class="btn-toggle">Engines</button>
                     <button id="btn-select-runtimes" class="btn-toggle">Runtimes</button>
                 </div>
+                <div class="engine-pills-container" id="engine-pills-container"></div>
             </div>
         </div>
 
@@ -671,7 +741,17 @@
         </div>
 
         <footer>
-            Built for multi-engine JavaScript benchmarking. Dynamically configured via <code>engines.json</code>.
+            <div class="footer-brand">
+                Made by <a href="https://github.com/NoClip/js-engines-benchmark" target="_blank" rel="noopener noreferrer">js-engines-benchmark</a>
+                &bull;
+                <a href="https://github.com/NoClip/js-engines-benchmark" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+            </div>
+            <div class="footer-disclaimer">
+                All product names, logos, brands, and engine/runtime designations (including Google V8, Mozilla SpiderMonkey, Apple WebKit / JavaScriptCore, Node.js, Bun, Deno, and QuickJS) are trademarks or registered trademarks of their respective holders and companies. Their reference in this benchmark suite is strictly for informational, interoperability, and performance evaluation purposes under fair use. Benchmark authors and contributors retain full copyright over their respective test workloads.
+            </div>
+            <div class="footer-copyright">
+                &copy; 2026 js-engines-benchmark Contributors. Released under the MIT License.
+            </div>
         </footer>
     </div>
 
@@ -683,7 +763,7 @@
             if (parenIdx !== -1) {
                 const main = name.substring(0, parenIdx).trim();
                 const paren = name.substring(parenIdx).trim();
-                return `<span class="eng-header-main">${main}</span><br><span class="eng-header-sub">${paren}</span>`;
+                return `<span class="eng-header-main">${main}</span><span class="eng-header-sub">${paren}</span>`;
             }
             return `<span class="eng-header-main">${name}</span>`;
         }
@@ -938,9 +1018,9 @@
 
                 const trHead = document.createElement("tr");
                 trHead.innerHTML = `
-                    <th>Benchmark</th>
-                    <th>Category</th>
-                    <th>Author</th>
+                    <th style="vertical-align: bottom; padding-bottom: 12px;">Benchmark</th>
+                    <th style="vertical-align: bottom; padding-bottom: 12px;">Category</th>
+                    <th style="vertical-align: bottom; padding-bottom: 12px;">Author</th>
                 `;
                 visibleEngines.forEach(e => {
                     const isBase = (e.id === currentBaselineId);
@@ -950,11 +1030,15 @@
                     const baseBadge = isBase ? `<span class="badge badge-baseline">BASE</span>` : "";
 
                     trHead.innerHTML += `
-                        <th style="color: ${e.color}; text-align: center; vertical-align: top; white-space: normal; min-width: 110px;">
-                            ${formatEngineHeader(e.name)}
-                            <div style="margin-top: 5px; display: flex; gap: 4px; justify-content: center; flex-wrap: wrap;">
-                                ${typeBadge}
-                                ${baseBadge}
+                        <th class="matrix-engine-header" style="color: ${e.color};">
+                            <div class="matrix-header-box">
+                                <div class="matrix-header-title">
+                                    ${formatEngineHeader(e.name)}
+                                </div>
+                                <div class="matrix-header-badges">
+                                    ${typeBadge}
+                                    ${baseBadge}
+                                </div>
                             </div>
                         </th>
                     `;
