@@ -10,7 +10,7 @@
 var log = typeof console !== "undefined" && console.log ? console.log : print;
 var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
 
-var REQUESTS = 2500;
+var REQUESTS = 5000;
 var MOD = 100000007;
 
 var RAW_HTTP_REQUEST = "GET /api/v1/users/42?format=json&cached=true HTTP/1.1\r\n" +
@@ -19,7 +19,7 @@ var RAW_HTTP_REQUEST = "GET /api/v1/users/42?format=json&cached=true HTTP/1.1\r\
     "Accept: application/json\r\n" +
     "Authorization: Bearer secret_token_xyz\r\n\r\n";
 
-function parseHttpRequest(raw) {
+function parseHttpPayload(raw) {
     var lines = raw.split("\r\n");
     var reqLine = lines[0].split(" ");
     var method = reqLine[0];
@@ -92,7 +92,7 @@ function runExpressBenchmark(requests, mod) {
     var checksum = 0;
 
     for (var i = 0; i < requests; i = i + 1) {
-        var req = parseHttpRequest(RAW_HTTP_REQUEST);
+        var req = parseHttpPayload(RAW_HTTP_REQUEST);
         var res = processPipeline(req, i);
         var httpText = formatHttpResponse(res);
 
@@ -104,10 +104,13 @@ function runExpressBenchmark(requests, mod) {
     return checksum;
 }
 
+// In-engine warmup
+runExpressBenchmark(100, MOD);
+
 var start = now();
 var checksum = runExpressBenchmark(REQUESTS, MOD);
 var end = now();
-var duration = Math.max(1, end - start);
+var duration = end - start;
 
 log("BENCHMARK_OUTPUT:" + JSON.stringify({
     name: "11_express_pipeline",

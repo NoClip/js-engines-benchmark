@@ -789,11 +789,19 @@
             let passedChecks = 0;
             benchmarks.forEach(b => {
                 const bRes = results[b.id] || {};
-                const refChecksum = bRes[engines[0]?.id]?.checksum;
+                let refChecksum = bRes[config.baseline]?.checksum;
+                if (refChecksum === undefined || refChecksum === null) {
+                    for (const e of engines) {
+                        if (bRes[e.id]?.checksum !== undefined && bRes[e.id]?.checksum !== null) {
+                            refChecksum = bRes[e.id].checksum;
+                            break;
+                        }
+                    }
+                }
                 engines.forEach(e => {
                     if (bRes[e.id]) {
                         totalChecks++;
-                        if (bRes[e.id].checksum === refChecksum) {
+                        if (bRes[e.id].checksum === refChecksum && refChecksum !== null && refChecksum !== undefined) {
                             passedChecks++;
                         }
                     }

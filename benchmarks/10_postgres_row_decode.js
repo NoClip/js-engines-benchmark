@@ -11,7 +11,7 @@ var log = typeof console !== "undefined" && console.log ? console.log : print;
 var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
 
 var ROWS_PER_QUERY = 100;
-var QUERIES = 200;
+var QUERIES = 2000;
 var BYTES_PER_ROW = 37;
 var MOD = 100000007;
 
@@ -43,7 +43,7 @@ function buildPostgresWireBuffer(rowCount) {
     return view;
 }
 
-function readRowHash(view, offset) {
+function decodePostgresRowHash(view, offset) {
     var id = view.getInt32(offset + 11);
     var userId = view.getInt32(offset + 19);
     var amount = view.getInt32(offset + 27);
@@ -56,7 +56,7 @@ function parsePostgresQuery(view, rowCount, currentChecksum, mod) {
     var csum = currentChecksum;
 
     for (var r = 0; r < rowCount; r = r + 1) {
-        var rowHash = readRowHash(view, offset);
+        var rowHash = decodePostgresRowHash(view, offset);
         csum = (csum + rowHash) % mod;
         offset = offset + 37;
     }
@@ -75,10 +75,13 @@ function runPostgresBenchmark(queries, rowCount, mod) {
     return checksum;
 }
 
+// In-engine warmup
+runPostgresBenchmark(20, ROWS_PER_QUERY, MOD);
+
 var start = now();
 var checksum = runPostgresBenchmark(QUERIES, ROWS_PER_QUERY, MOD);
 var end = now();
-var duration = Math.max(1, end - start);
+var duration = end - start;
 
 log("BENCHMARK_OUTPUT:" + JSON.stringify({
     name: "10_postgres_row_decode",

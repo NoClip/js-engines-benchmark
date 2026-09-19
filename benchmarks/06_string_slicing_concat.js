@@ -10,7 +10,7 @@
 var log = typeof console !== "undefined" && console.log ? console.log : print;
 var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
 
-var ITERATIONS = 10000;
+var ITERATIONS = 200000;
 var MOD = 100000007;
 
 function runStringConcat(iterations, mod) {
@@ -32,10 +32,13 @@ function runStringConcat(iterations, mod) {
     return checksum;
 }
 
+// In-engine warmup
+runStringConcat(5000, MOD);
+
 var start = now();
 var checksum = runStringConcat(ITERATIONS, MOD);
 var end = now();
-var duration = Math.max(1, end - start);
+var duration = end - start;
 
 log("BENCHMARK_OUTPUT:" + JSON.stringify({
     name: "06_string_slicing_concat",

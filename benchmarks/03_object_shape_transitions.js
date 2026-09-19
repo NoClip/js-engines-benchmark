@@ -10,7 +10,7 @@
 var log = typeof console !== "undefined" && console.log ? console.log : print;
 var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
 
-var ITERATIONS = 30000;
+var ITERATIONS = 500000;
 var MOD = 100000007;
 
 function runObjectShapes(n, mod) {
@@ -23,10 +23,13 @@ function runObjectShapes(n, mod) {
     return total;
 }
 
+// In-engine warmup
+runObjectShapes(10000, MOD);
+
 var start = now();
 var total = runObjectShapes(ITERATIONS, MOD);
 var end = now();
-var duration = Math.max(1, end - start);
+var duration = end - start;
 
 log("BENCHMARK_OUTPUT:" + JSON.stringify({
     name: "03_object_shape_transitions",

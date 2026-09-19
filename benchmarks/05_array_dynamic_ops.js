@@ -10,7 +10,7 @@
 var log = typeof console !== "undefined" && console.log ? console.log : print;
 var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
 
-var COUNT = 50000;
+var COUNT = 500000;
 var MOD = 100000007;
 
 function runArrayOps(count, mod) {
@@ -26,10 +26,13 @@ function runArrayOps(count, mod) {
     return sum;
 }
 
+// In-engine warmup
+runArrayOps(10000, MOD);
+
 var start = now();
 var sum = runArrayOps(COUNT, MOD);
 var end = now();
-var duration = Math.max(1, end - start);
+var duration = end - start;
 
 log("BENCHMARK_OUTPUT:" + JSON.stringify({
     name: "05_array_dynamic_ops",

@@ -10,7 +10,7 @@
 var log = typeof console !== "undefined" && console.log ? console.log : print;
 var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
 
-var ITERATIONS = 100000;
+var ITERATIONS = 500000;
 var MOD = 100000007;
 
 function myHash(data, len, mod) {
@@ -31,10 +31,13 @@ function runCryptoHash(iterations, mod) {
     return checksum;
 }
 
+// In-engine warmup
+runCryptoHash(10000, MOD);
+
 var start = now();
 var checksum = runCryptoHash(ITERATIONS, MOD);
 var end = now();
-var duration = Math.max(1, end - start);
+var duration = end - start;
 
 log("BENCHMARK_OUTPUT:" + JSON.stringify({
     name: "07_crypto_hash",

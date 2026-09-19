@@ -10,7 +10,7 @@
 var log = typeof console !== "undefined" && console.log ? console.log : print;
 var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
 
-var LIMIT = 150000;
+var LIMIT = 1000000;
 var MOD = 100000007;
 
 function runPrimeSieve(limit, mod) {
@@ -38,10 +38,13 @@ function runPrimeSieve(limit, mod) {
     return primeSum;
 }
 
+// In-engine warmup
+runPrimeSieve(20000, MOD);
+
 var start = now();
 var primeSum = runPrimeSieve(LIMIT, MOD);
 var end = now();
-var duration = Math.max(1, end - start);
+var duration = end - start;
 
 log("BENCHMARK_OUTPUT:" + JSON.stringify({
     name: "08_prime_sieve",

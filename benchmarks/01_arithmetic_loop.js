@@ -10,7 +10,7 @@
 var log = typeof console !== "undefined" && console.log ? console.log : print;
 var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
 
-var ITERATIONS = 1000000;
+var ITERATIONS = 5000000;
 var MOD = 100000007;
 
 function runArithmeticLoop(n, mod) {
@@ -21,10 +21,13 @@ function runArithmeticLoop(n, mod) {
     return sum;
 }
 
+// In-engine warmup to tier up optimizing JIT compilers
+runArithmeticLoop(100000, MOD);
+
 var start = now();
 var sum = runArithmeticLoop(ITERATIONS, MOD);
 var end = now();
-var duration = Math.max(1, end - start);
+var duration = end - start;
 
 log("BENCHMARK_OUTPUT:" + JSON.stringify({
     name: "01_arithmetic_loop",

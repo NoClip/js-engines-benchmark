@@ -11,11 +11,11 @@ var log = typeof console !== "undefined" && console.log ? console.log : print;
 var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
 
 var CLIENT_COUNT = 32;
-var BROADCASTS = 500;
+var BROADCASTS = 1500;
 var PAYLOAD_SIZE = 128;
 var MOD = 100000007;
 
-function unmaskFrame(serverPayload, maskedFrame, maskKey) {
+function unmaskWebSocketPayload(serverPayload, maskedFrame, maskKey) {
     for (var u = 0; u < PAYLOAD_SIZE; u = u + 1) {
         serverPayload[u] = maskedFrame[u] ^ maskKey[u & 3];
     }
@@ -54,17 +54,20 @@ function runWebSocketBroadcast(broadcasts, mod) {
     var checksum = 0;
 
     for (var b = 0; b < broadcasts; b = b + 1) {
-        unmaskFrame(serverPayload, maskedClientFrame, maskKey);
+        unmaskWebSocketPayload(serverPayload, maskedClientFrame, maskKey);
         checksum = dispatchToClients(b, serverPayload, clientBuffers, checksum, mod);
     }
 
     return checksum;
 }
 
+// In-engine warmup
+runWebSocketBroadcast(50, MOD);
+
 var start = now();
 var checksum = runWebSocketBroadcast(BROADCASTS, MOD);
 var end = now();
-var duration = Math.max(1, end - start);
+var duration = end - start;
 
 log("BENCHMARK_OUTPUT:" + JSON.stringify({
     name: "09_websocket_broadcast",

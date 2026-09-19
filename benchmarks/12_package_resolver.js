@@ -10,7 +10,7 @@
 var log = typeof console !== "undefined" && console.log ? console.log : print;
 var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
 
-var RESOLUTIONS = 300;
+var RESOLUTIONS = 600;
 var MOD = 100000007;
 
 // Simulated package registry with available versions and their transitive dependencies
@@ -63,7 +63,7 @@ function resolveOnePackage(pkg, resolved, queue, registry) {
     }
 }
 
-function resolveDependencies(rootDeps, registry) {
+function resolveDependencyGraph(rootDeps, registry) {
     var resolved = {};
     var queue = rootDeps.slice();
 
@@ -113,7 +113,7 @@ function runPackageResolver(resolutions, mod) {
     var checksum = 0;
 
     for (var r = 0; r < resolutions; r = r + 1) {
-        var resolved = resolveDependencies(ROOT_DEPS, REGISTRY);
+        var resolved = resolveDependencyGraph(ROOT_DEPS, REGISTRY);
         var order = topologicalSort(resolved, REGISTRY);
 
         // Fold installation order into deterministic checksum
@@ -127,10 +127,13 @@ function runPackageResolver(resolutions, mod) {
     return checksum;
 }
 
+// In-engine warmup
+runPackageResolver(20, MOD);
+
 var start = now();
 var checksum = runPackageResolver(RESOLUTIONS, MOD);
 var end = now();
-var duration = Math.max(1, end - start);
+var duration = end - start;
 
 log("BENCHMARK_OUTPUT:" + JSON.stringify({
     name: "12_package_resolver",

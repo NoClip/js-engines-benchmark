@@ -10,7 +10,7 @@
 var log = typeof console !== "undefined" && console.log ? console.log : print;
 var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
 
-var SIZE = 50000;
+var SIZE = 1000000;
 var MOD = 100000007;
 
 function runTypedArray(size, mod) {
@@ -26,10 +26,13 @@ function runTypedArray(size, mod) {
     return sum;
 }
 
+// In-engine warmup
+runTypedArray(10000, MOD);
+
 var start = now();
 var sum = runTypedArray(SIZE, MOD);
 var end = now();
-var duration = Math.max(1, end - start);
+var duration = end - start;
 
 log("BENCHMARK_OUTPUT:" + JSON.stringify({
     name: "04_typedarray_throughput",

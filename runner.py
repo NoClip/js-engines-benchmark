@@ -473,10 +473,12 @@ def main():
             baseline_mean = b_res["v8_turbofan"]["mean"]
             ref_checksum = b_res["v8_turbofan"]["checksum"]
         else:
-            first_id = active_engines[0]["id"]
-            if b_res[first_id]["mean"] > 0:
-                baseline_mean = b_res[first_id]["mean"]
-                ref_checksum = b_res[first_id]["checksum"]
+            for cand_eng in active_engines:
+                cand_id = cand_eng["id"]
+                if cand_id in b_res and b_res[cand_id].get("checksum") is not None and b_res[cand_id]["mean"] > 0:
+                    baseline_mean = b_res[cand_id]["mean"]
+                    ref_checksum = b_res[cand_id]["checksum"]
+                    break
 
         for eng in active_engines:
             e_id = eng["id"]
@@ -493,15 +495,20 @@ def main():
             std_dev = data["std_dev"]
             csum = data["checksum"]
 
+            is_valid_csum = (csum == ref_checksum and ref_checksum is not None)
+            csum_status = "PASS" if is_valid_csum else f"MISMATCH ({csum})"
+            data["checksum_status"] = "PASS" if is_valid_csum else "MISMATCH"
+
             speedup = baseline_mean / mean if mean > 0 else 0.0
-            if e_id == baseline_id:
+            if not is_valid_csum and e_id != baseline_id:
+                rel_str = "MISMATCH"
+            elif e_id == baseline_id:
                 rel_str = "1.00x (Base)"
             elif speedup >= 1.0:
                 rel_str = f"{speedup:.2f}x faster"
             else:
                 rel_str = f"{(1/speedup):.2f}x slower"
 
-            csum_status = "PASS" if csum == ref_checksum else f"MISMATCH ({csum})"
             print(header_fmt.format(b_id, eng["name"], e_type, f"{mean:.2f}", f"{median:.2f}", f"±{std_dev:.2f}", rel_str, csum_status))
             summary_md_rows.append(f"| `{b_id}` | {b_meta.get('author', 'Standard')} | {eng['name']} | **{e_type}** | {e_backend} | {mean:.2f} ms | {median:.2f} ms | {rel_str} | `{csum}` ({csum_status}) |")
 
