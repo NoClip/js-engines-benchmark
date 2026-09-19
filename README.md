@@ -4,6 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-Standard%20Library%20Only-brightgreen.svg)]()
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
+[![Made With AI](https://img.shields.io/badge/Made%20With-AI-blueviolet.svg)](#)
 
 An automated, high-precision performance benchmarking and mathematical checksum validation suite for JavaScript and WebAssembly runtimes.
 
@@ -85,7 +86,7 @@ python runner.py --type all
 ```
 
 > **Taxonomy Note**:
-> - **JS Engine (VM)**: Pure execution engine that compiles and runs JavaScript bytecode/machine code without I/O runtimes (e.g. **R8 (Rust V8)**, **Google V8 Standalone (`d8`)**, **Mozilla SpiderMonkey (`sm`)**, **QuickJS (`qjs`)**, **JavaScriptCore (`jsc`)**). **R8 is strictly an Engine, not a runtime.**
+> - **JS Engine (VM)**: Pure execution engine that compiles and runs JavaScript bytecode/machine code without I/O runtimes (e.g. **R8 (Rust V8)**, **Google V8 Standalone (`d8`)**, **Mozilla SpiderMonkey (`sm`)**, **QuickJS (`qjs`)**, **JavaScriptCore (`jsc`)**).
 > - **JS Runtime**: Application environment bundling a JS engine with event loop, OS I/O, and Web APIs (e.g. **Bun** = WebKit JSC + Zig, **Node.js** = Google V8 + libuv, **Deno** = Google V8 + Tokio).
 
 ### 3. Automated Zero-Permission Engine Installer (`--auto-install` & `--install`)
