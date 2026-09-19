@@ -19,7 +19,7 @@ var RAW_HTTP_REQUEST = "GET /api/v1/users/42?format=json&cached=true HTTP/1.1\r\
     "Accept: application/json\r\n" +
     "Authorization: Bearer secret_token_xyz\r\n\r\n";
 
-function parseHttpPayload(raw) {
+function parseHttpRequest(raw) {
     var lines = raw.split("\r\n");
     var reqLine = lines[0].split(" ");
     var method = reqLine[0];
@@ -92,7 +92,7 @@ function runExpressBenchmark(requests, mod) {
     var checksum = 0;
 
     for (var i = 0; i < requests; i = i + 1) {
-        var req = parseHttpPayload(RAW_HTTP_REQUEST);
+        var req = parseHttpRequest(RAW_HTTP_REQUEST);
         var res = processPipeline(req, i);
         var httpText = formatHttpResponse(res);
 

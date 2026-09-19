@@ -15,7 +15,7 @@ var BROADCASTS = 1500;
 var PAYLOAD_SIZE = 128;
 var MOD = 100000007;
 
-function unmaskWebSocketPayload(serverPayload, maskedFrame, maskKey) {
+function unmaskFrame(serverPayload, maskedFrame, maskKey) {
     for (var u = 0; u < PAYLOAD_SIZE; u = u + 1) {
         serverPayload[u] = maskedFrame[u] ^ maskKey[u & 3];
     }
@@ -54,7 +54,7 @@ function runWebSocketBroadcast(broadcasts, mod) {
     var checksum = 0;
 
     for (var b = 0; b < broadcasts; b = b + 1) {
-        unmaskWebSocketPayload(serverPayload, maskedClientFrame, maskKey);
+        unmaskFrame(serverPayload, maskedClientFrame, maskKey);
         checksum = dispatchToClients(b, serverPayload, clientBuffers, checksum, mod);
     }
 

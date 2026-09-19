@@ -63,7 +63,7 @@ function resolveOnePackage(pkg, resolved, queue, registry) {
     }
 }
 
-function resolveDependencyGraph(rootDeps, registry) {
+function resolveDependencies(rootDeps, registry) {
     var resolved = {};
     var queue = rootDeps.slice();
 
@@ -113,7 +113,7 @@ function runPackageResolver(resolutions, mod) {
     var checksum = 0;
 
     for (var r = 0; r < resolutions; r = r + 1) {
-        var resolved = resolveDependencyGraph(ROOT_DEPS, REGISTRY);
+        var resolved = resolveDependencies(ROOT_DEPS, REGISTRY);
         var order = topologicalSort(resolved, REGISTRY);
 
         // Fold installation order into deterministic checksum

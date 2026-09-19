@@ -43,7 +43,7 @@ function buildPostgresWireBuffer(rowCount) {
     return view;
 }
 
-function decodePostgresRowHash(view, offset) {
+function readRowHash(view, offset) {
     var id = view.getInt32(offset + 11);
     var userId = view.getInt32(offset + 19);
     var amount = view.getInt32(offset + 27);
@@ -56,7 +56,7 @@ function parsePostgresQuery(view, rowCount, currentChecksum, mod) {
     var csum = currentChecksum;
 
     for (var r = 0; r < rowCount; r = r + 1) {
-        var rowHash = decodePostgresRowHash(view, offset);
+        var rowHash = readRowHash(view, offset);
         csum = (csum + rowHash) % mod;
         offset = offset + 37;
     }

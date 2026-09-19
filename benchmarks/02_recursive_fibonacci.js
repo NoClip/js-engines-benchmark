@@ -11,10 +11,8 @@ var log = typeof console !== "undefined" && console.log ? console.log : print;
 var now = typeof performance !== "undefined" && performance.now ? function() { return performance.now(); } : Date.now;
 
 function fib(n) {
-    if (n < 2) return n;
-    var a = fib(n - 1);
-    var b = fib(n - 2);
-    return a + b;
+    if (n <= 1) return n;
+    return fib(n - 1) + fib(n - 2);
 }
 
 // In-engine warmup
