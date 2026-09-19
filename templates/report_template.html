@@ -132,7 +132,14 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 24px;
-            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 380px;
+            width: 100%;
         }
 
         .chart-card h2 {
@@ -283,11 +290,15 @@
         <div class="charts-grid">
             <div class="chart-card">
                 <h2>Execution Time by Benchmark (Lower is Better)</h2>
-                <canvas id="timeChart"></canvas>
+                <div class="chart-container">
+                    <canvas id="timeChart"></canvas>
+                </div>
             </div>
             <div class="chart-card">
                 <h2>Relative Speedup vs Baseline V8 (Higher is Better)</h2>
-                <canvas id="speedupChart"></canvas>
+                <div class="chart-container">
+                    <canvas id="speedupChart"></canvas>
+                </div>
             </div>
         </div>
 
