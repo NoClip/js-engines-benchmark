@@ -191,6 +191,13 @@
             cursor: pointer;
         }
 
+        .controls-divider {
+            width: 1px;
+            height: 22px;
+            background: var(--border-color);
+            margin: 0 4px;
+        }
+
         /* Engine Multi-Select Checkbox Pills */
         .engine-pills-row {
             display: flex;
@@ -251,29 +258,6 @@
         .engine-pill:hover {
             border-color: var(--pill-color, var(--accent-blue));
             color: var(--text-primary);
-        }
-
-        .btn-group-mini {
-            display: inline-flex;
-            gap: 4px;
-            margin-left: 6px;
-        }
-
-        .btn-mini {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.72rem;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .btn-mini:hover {
-            background: rgba(88, 166, 255, 0.15);
-            color: var(--text-primary);
-            border-color: var(--accent-blue);
         }
 
         .baseline-status-note {
@@ -476,9 +460,21 @@
             display: inline-block;
             padding: 2px 7px;
             border-radius: 12px;
-            font-size: 0.72rem;
+            font-size: 0.70rem;
             font-weight: 600;
             white-space: nowrap;
+        }
+
+        .badge-engine {
+            background: rgba(224, 108, 117, 0.2);
+            color: #e06c75;
+            border: 1px solid rgba(224, 108, 117, 0.4);
+        }
+
+        .badge-runtime {
+            background: rgba(97, 175, 239, 0.2);
+            color: #61afef;
+            border: 1px solid rgba(97, 175, 239, 0.4);
         }
 
         .badge-pass {
@@ -494,9 +490,9 @@
         }
 
         .badge-baseline {
-            background: rgba(188, 140, 255, 0.15);
+            background: rgba(188, 140, 255, 0.18);
             color: var(--accent-purple);
-            border: 1px solid rgba(188, 140, 255, 0.3);
+            border: 1px solid rgba(188, 140, 255, 0.35);
             font-weight: 600;
         }
 
@@ -507,6 +503,19 @@
 
         .speedup-slower {
             color: var(--accent-orange);
+        }
+
+        .eng-header-main {
+            font-weight: 700;
+            font-size: 0.88rem;
+        }
+
+        .eng-header-sub {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            display: inline-block;
+            margin-top: 2px;
         }
 
         .matrix-cell-best {
@@ -552,10 +561,7 @@
                 <div class="control-item">
                     <label for="baseline-select" class="control-label">Baseline Engine:</label>
                     <select id="baseline-select" class="control-select"></select>
-                </div>
-
-                <div class="control-item">
-                    <label class="checkbox-container">
+                    <label class="checkbox-container" style="margin-left: 8px;">
                         <input type="checkbox" id="always-show-baseline">
                         <span>Always show baseline</span>
                     </label>
@@ -564,8 +570,8 @@
                 <div class="control-item">
                     <span class="control-label">View:</span>
                     <div class="btn-group" id="view-mode">
-                        <button class="btn-toggle active" data-view="flat">Detailed List</button>
-                        <button class="btn-toggle" data-view="matrix">Comparison Matrix</button>
+                        <button class="btn-toggle active" data-view="matrix">Comparison Matrix</button>
+                        <button class="btn-toggle" data-view="flat">Detailed List</button>
                     </div>
                 </div>
             </div>
@@ -574,11 +580,12 @@
             <div class="engine-pills-row">
                 <span class="control-label">Compare Engines:</span>
                 <div class="engine-pills-container" id="engine-pills-container"></div>
-                <div class="btn-group-mini">
-                    <button id="btn-select-all" class="btn-mini">All</button>
-                    <button id="btn-select-engines" class="btn-mini">Engines</button>
-                    <button id="btn-select-runtimes" class="btn-mini">Runtimes</button>
-                    <button id="btn-select-none" class="btn-mini">None</button>
+                <div class="controls-divider"></div>
+                <span class="control-label">Show:</span>
+                <div class="btn-group">
+                    <button id="btn-select-all" class="btn-toggle">All</button>
+                    <button id="btn-select-engines" class="btn-toggle">Engines</button>
+                    <button id="btn-select-runtimes" class="btn-toggle">Runtimes</button>
                 </div>
             </div>
         </div>
@@ -632,8 +639,14 @@
                 <span class="table-stats-count" id="table-stats-count">Showing results</span>
             </div>
 
+            <!-- Matrix Comparison View (Default) -->
+            <table id="matrix-table">
+                <thead id="matrix-thead"></thead>
+                <tbody id="matrix-tbody"></tbody>
+            </table>
+
             <!-- Flat Detailed View -->
-            <table id="summary-table">
+            <table id="summary-table" style="display: none;">
                 <thead>
                     <tr>
                         <th class="sortable" data-col="benchmark">Benchmark <span class="sort-icon">↕</span></th>
@@ -652,12 +665,6 @@
                 <tbody id="summary-tbody"></tbody>
             </table>
 
-            <!-- Matrix Comparison View -->
-            <table id="matrix-table" style="display: none;">
-                <thead id="matrix-thead"></thead>
-                <tbody id="matrix-tbody"></tbody>
-            </table>
-
             <div id="empty-state" class="empty-results" style="display: none;">
                 No engines selected. Check at least one engine in the top bar to compare results.
             </div>
@@ -670,6 +677,16 @@
 
     <script>
         const reportData = /*BENCHMARK_DATA_PLACEHOLDER*/;
+
+        function formatEngineHeader(name) {
+            const parenIdx = name.indexOf("(");
+            if (parenIdx !== -1) {
+                const main = name.substring(0, parenIdx).trim();
+                const paren = name.substring(parenIdx).trim();
+                return `<span class="eng-header-main">${main}</span><br><span class="eng-header-sub">${paren}</span>`;
+            }
+            return `<span class="eng-header-main">${name}</span>`;
+        }
 
         document.addEventListener("DOMContentLoaded", () => {
             if (!reportData) return;
@@ -736,11 +753,11 @@
                 legendContainer.appendChild(item);
             });
 
-            // Application State
+            // Application State: Matrix View is the default
             let currentBaselineId = config.baseline || (engines.some(e => e.id === "v8_turbofan") ? "v8_turbofan" : engines[0]?.id);
             let selectedEngines = new Set(engines.map(e => e.id)); // All selected by default
             let alwaysShowBaseline = false;
-            let currentView = "flat";
+            let currentView = "matrix";
             let sortCol = "benchmark";
             let sortAsc = true;
 
@@ -798,7 +815,6 @@
                 return false;
             }
 
-            // Batch selection buttons
             function updatePillStyles() {
                 pillsContainer.querySelectorAll(".engine-pill").forEach(label => {
                     const cb = label.querySelector("input");
@@ -825,12 +841,6 @@
 
             document.getElementById("btn-select-runtimes").addEventListener("click", () => {
                 selectedEngines = new Set(engines.filter(e => e.type === "runtime").map(e => e.id));
-                updatePillStyles();
-                renderAll();
-            });
-
-            document.getElementById("btn-select-none").addEventListener("click", () => {
-                selectedEngines.clear();
                 updatePillStyles();
                 renderAll();
             });
@@ -915,6 +925,99 @@
                 speedupChart.options.scales.y.title.text = `Speedup Factor vs ${baseName} (1.0 = Baseline)`;
                 document.getElementById("speedup-chart-title").textContent = `Relative Speedup vs Baseline: ${baseName} (Higher is Better)`;
                 speedupChart.update();
+            }
+
+            // Matrix Table Rendering
+            function renderMatrixTable() {
+                const thead = document.getElementById("matrix-thead");
+                const tbody = document.getElementById("matrix-tbody");
+                thead.innerHTML = "";
+                tbody.innerHTML = "";
+
+                const visibleEngines = engines.filter(e => isEngineVisible(e.id));
+
+                const trHead = document.createElement("tr");
+                trHead.innerHTML = `
+                    <th>Benchmark</th>
+                    <th>Category</th>
+                    <th>Author</th>
+                `;
+                visibleEngines.forEach(e => {
+                    const isBase = (e.id === currentBaselineId);
+                    const typeBadge = e.type === "engine"
+                        ? `<span class="badge badge-engine">ENGINE</span>`
+                        : `<span class="badge badge-runtime">RUNTIME</span>`;
+                    const baseBadge = isBase ? `<span class="badge badge-baseline">BASE</span>` : "";
+
+                    trHead.innerHTML += `
+                        <th style="color: ${e.color}; text-align: center; vertical-align: top; white-space: normal; min-width: 110px;">
+                            ${formatEngineHeader(e.name)}
+                            <div style="margin-top: 5px; display: flex; gap: 4px; justify-content: center; flex-wrap: wrap;">
+                                ${typeBadge}
+                                ${baseBadge}
+                            </div>
+                        </th>
+                    `;
+                });
+                thead.appendChild(trHead);
+
+                benchmarks.forEach(b => {
+                    const bRes = results[b.id] || {};
+                    const baseMean = bRes[currentBaselineId]?.mean || 1.0;
+
+                    let fastestMean = Infinity;
+                    let fastestId = null;
+                    visibleEngines.forEach(e => {
+                        const m = bRes[e.id]?.mean;
+                        if (m && m < fastestMean) {
+                            fastestMean = m;
+                            fastestId = e.id;
+                        }
+                    });
+
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td><strong>${b.name}</strong></td>
+                        <td>${b.category}</td>
+                        <td><small style="color: var(--text-secondary)">${b.author || 'Standard'}</small></td>
+                    `;
+
+                    visibleEngines.forEach(e => {
+                        const r = bRes[e.id];
+                        if (!r) {
+                            tr.innerHTML += `<td style="text-align: center;"><span style="color: var(--text-muted);">-</span></td>`;
+                            return;
+                        }
+
+                        const isBase = (e.id === currentBaselineId);
+                        const isBest = (e.id === fastestId && visibleEngines.length > 1);
+                        const speedup = r.mean > 0 ? (baseMean / r.mean) : 0.0;
+
+                        let speedupSub = "";
+                        if (isBase) {
+                            speedupSub = `<div style="font-size:0.75rem; color: var(--accent-purple); font-weight:600;">1.00x Base</div>`;
+                        } else if (speedup >= 1.0) {
+                            speedupSub = `<div style="font-size:0.75rem;" class="speedup-faster">${speedup.toFixed(2)}x faster</div>`;
+                        } else {
+                            speedupSub = `<div style="font-size:0.75rem;" class="speedup-slower">${(1/speedup).toFixed(2)}x slower</div>`;
+                        }
+
+                        const bestClass = isBest ? "matrix-cell-best" : "";
+                        tr.innerHTML += `
+                            <td style="text-align: center;">
+                                <div class="${bestClass}">
+                                    <div>${r.mean.toFixed(2)} ms</div>
+                                    ${speedupSub}
+                                </div>
+                            </td>
+                        `;
+                    });
+
+                    tbody.appendChild(tr);
+                });
+
+                const countEl = document.getElementById("table-stats-count");
+                countEl.textContent = `Showing ${benchmarks.length} benchmarks × ${visibleEngines.length} engines`;
             }
 
             // Flat Table Rendering
@@ -1026,8 +1129,8 @@
                         : `<span class="badge badge-fail">MISMATCH (${item.r.checksum})</span>`;
 
                     const typeBadge = item.e.type === "engine"
-                        ? `<span class="badge" style="background: rgba(224, 108, 117, 0.2); color: #e06c75; border: 1px solid rgba(224, 108, 117, 0.4);">ENGINE</span>`
-                        : `<span class="badge" style="background: rgba(97, 175, 239, 0.2); color: #61afef; border: 1px solid rgba(97, 175, 239, 0.4);">RUNTIME</span>`;
+                        ? `<span class="badge badge-engine">ENGINE</span>`
+                        : `<span class="badge badge-runtime">RUNTIME</span>`;
 
                     tr.innerHTML = `
                         <td><strong>${item.b.name}</strong></td>
@@ -1056,96 +1159,15 @@
                 }
             }
 
-            // Matrix Table Rendering
-            function renderMatrixTable() {
-                const thead = document.getElementById("matrix-thead");
-                const tbody = document.getElementById("matrix-tbody");
-                thead.innerHTML = "";
-                tbody.innerHTML = "";
-
-                const visibleEngines = engines.filter(e => isEngineVisible(e.id));
-
-                const trHead = document.createElement("tr");
-                trHead.innerHTML = `
-                    <th>Benchmark</th>
-                    <th>Category</th>
-                    <th>Author</th>
-                `;
-                visibleEngines.forEach(e => {
-                    const isBase = (e.id === currentBaselineId);
-                    const tag = isBase ? ` <span class="badge badge-baseline" style="font-size:0.65rem;">BASE</span>` : "";
-                    trHead.innerHTML += `<th style="color: ${e.color}; white-space: nowrap;">${e.name}${tag}</th>`;
-                });
-                thead.appendChild(trHead);
-
-                benchmarks.forEach(b => {
-                    const bRes = results[b.id] || {};
-                    const baseMean = bRes[currentBaselineId]?.mean || 1.0;
-
-                    let fastestMean = Infinity;
-                    let fastestId = null;
-                    visibleEngines.forEach(e => {
-                        const m = bRes[e.id]?.mean;
-                        if (m && m < fastestMean) {
-                            fastestMean = m;
-                            fastestId = e.id;
-                        }
-                    });
-
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td><strong>${b.name}</strong></td>
-                        <td>${b.category}</td>
-                        <td><small style="color: var(--text-secondary)">${b.author || 'Standard'}</small></td>
-                    `;
-
-                    visibleEngines.forEach(e => {
-                        const r = bRes[e.id];
-                        if (!r) {
-                            tr.innerHTML += `<td><span style="color: var(--text-muted);">-</span></td>`;
-                            return;
-                        }
-
-                        const isBase = (e.id === currentBaselineId);
-                        const isBest = (e.id === fastestId && visibleEngines.length > 1);
-                        const speedup = r.mean > 0 ? (baseMean / r.mean) : 0.0;
-
-                        let speedupSub = "";
-                        if (isBase) {
-                            speedupSub = `<div style="font-size:0.75rem; color: var(--accent-purple); font-weight:600;">1.00x Base</div>`;
-                        } else if (speedup >= 1.0) {
-                            speedupSub = `<div style="font-size:0.75rem;" class="speedup-faster">${speedup.toFixed(2)}x faster</div>`;
-                        } else {
-                            speedupSub = `<div style="font-size:0.75rem;" class="speedup-slower">${(1/speedup).toFixed(2)}x slower</div>`;
-                        }
-
-                        const bestClass = isBest ? "matrix-cell-best" : "";
-                        tr.innerHTML += `
-                            <td>
-                                <div class="${bestClass}">
-                                    <div>${r.mean.toFixed(2)} ms</div>
-                                    ${speedupSub}
-                                </div>
-                            </td>
-                        `;
-                    });
-
-                    tbody.appendChild(tr);
-                });
-
-                const countEl = document.getElementById("table-stats-count");
-                countEl.textContent = `Showing ${benchmarks.length} benchmarks × ${visibleEngines.length} engines`;
-            }
-
             function renderTables() {
-                if (currentView === "flat") {
-                    document.getElementById("summary-table").style.display = "table";
-                    document.getElementById("matrix-table").style.display = "none";
-                    renderFlatTable();
-                } else {
-                    document.getElementById("summary-table").style.display = "none";
+                if (currentView === "matrix") {
                     document.getElementById("matrix-table").style.display = "table";
+                    document.getElementById("summary-table").style.display = "none";
                     renderMatrixTable();
+                } else {
+                    document.getElementById("matrix-table").style.display = "none";
+                    document.getElementById("summary-table").style.display = "table";
+                    renderFlatTable();
                 }
             }
 
