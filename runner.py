@@ -229,6 +229,8 @@ def main():
     parser.add_argument("--install", nargs="*", default=None, help="Explicitly install specified engines (e.g. --install bun r8 or --install all) and exit")
     parser.add_argument("--sync-upstream", action="store_true", help="Synchronize benchmarks from official origin repositories (skips existing files unless --force is passed)")
     parser.add_argument("--force", action="store_true", help="Force re-download / overwrite existing cached scripts or engines")
+    parser.add_argument("--baseline", type=str, default="v8_turbofan",
+                        help="Baseline engine ID for relative speedup calculations (default: v8_turbofan)")
     parser.add_argument("--no-html", action="store_true", help="Skip generating HTML report")
     parser.add_argument("--output-dir", type=str, default=str(RESULTS_DIR), help="Output directory for reports")
     args = parser.parse_args()
@@ -415,9 +417,45 @@ def main():
 
     # 4. Checksum Parity Validation & Results Summary Table
     print_header("Performance Summary & Checksum Validation")
-    header_fmt = "{:<24} | {:<26} | {:<8} | {:>10} | {:>10} | {:>9} | {:>14} | {:<12}"
+
+    # Determine baseline engine (from --baseline or default v8_turbofan or first available)
+    avail_engine_ids = [e["id"] for e in active_engines]
+    baseline_id = args.baseline
+    if baseline_id not in avail_engine_ids:
+        if "v8_turbofan" in avail_engine_ids:
+            baseline_id = "v8_turbofan"
+        elif avail_engine_ids:
+            baseline_id = avail_engine_ids[0]
+        else:
+            baseline_id = "v8_turbofan"
+
+    # Calculate dynamic column widths based on longest workload and engine name
+    bench_col_w = max(len("Benchmark"), max((len(b["id"]) for b in bench_meta_list), default=20))
+    target_col_w = max(len("Target"), max((len(eng["name"]) for eng in active_engines), default=24))
+    type_col_w = 8
+    mean_col_w = 10
+    median_col_w = 10
+    stddev_col_w = 9
+    baseline_col_w = 15
+    checksum_col_w = 12
+
+    header_fmt = (
+        f"{{:<{bench_col_w}}} | "
+        f"{{:<{target_col_w}}} | "
+        f"{{:<{type_col_w}}} | "
+        f"{{:>{mean_col_w}}} | "
+        f"{{:>{median_col_w}}} | "
+        f"{{:>{stddev_col_w}}} | "
+        f"{{:>{baseline_col_w}}} | "
+        f"{{:<{checksum_col_w}}}"
+    )
+    separator_len = (
+        bench_col_w + target_col_w + type_col_w +
+        mean_col_w + median_col_w + stddev_col_w +
+        baseline_col_w + checksum_col_w + (7 * 3)
+    )
     print(header_fmt.format("Benchmark", "Target", "Type", "Mean (ms)", "Median", "StdDev", "vs Baseline", "Checksum"))
-    print("-" * 125)
+    print("-" * separator_len)
 
     summary_md_rows = []
 
@@ -426,9 +464,12 @@ def main():
         b_res = results[b_id]
         ref_checksum = None
 
-        # Find baseline reference engine (prefer v8_turbofan, otherwise first active)
+        # Find baseline reference engine
         baseline_mean = 1.0
-        if "v8_turbofan" in b_res and b_res["v8_turbofan"]["mean"] > 0:
+        if baseline_id in b_res and b_res[baseline_id]["mean"] > 0:
+            baseline_mean = b_res[baseline_id]["mean"]
+            ref_checksum = b_res[baseline_id]["checksum"]
+        elif "v8_turbofan" in b_res and b_res["v8_turbofan"]["mean"] > 0:
             baseline_mean = b_res["v8_turbofan"]["mean"]
             ref_checksum = b_res["v8_turbofan"]["checksum"]
         else:
@@ -443,7 +484,7 @@ def main():
             e_backend = eng.get("engine_backend", "VM")
             data = b_res.get(e_id, {})
             if data.get("error"):
-                print(header_fmt.format(b_id, eng["name"][:26], e_type, "ERR", "ERR", "ERR", "N/A", "FAIL"))
+                print(header_fmt.format(b_id, eng["name"], e_type, "ERR", "ERR", "ERR", "N/A", "FAIL"))
                 summary_md_rows.append(f"| `{b_id}` | {b_meta.get('author', 'Standard')} | {eng['name']} | **{e_type}** | {e_backend} | ERR | ERR | - | FAIL |")
                 continue
 
@@ -453,7 +494,7 @@ def main():
             csum = data["checksum"]
 
             speedup = baseline_mean / mean if mean > 0 else 0.0
-            if e_id == "v8_turbofan":
+            if e_id == baseline_id:
                 rel_str = "1.00x (Base)"
             elif speedup >= 1.0:
                 rel_str = f"{speedup:.2f}x faster"
@@ -461,7 +502,7 @@ def main():
                 rel_str = f"{(1/speedup):.2f}x slower"
 
             csum_status = "PASS" if csum == ref_checksum else f"MISMATCH ({csum})"
-            print(header_fmt.format(b_id, eng["name"][:26], e_type, f"{mean:.2f}", f"{median:.2f}", f"±{std_dev:.2f}", rel_str, csum_status))
+            print(header_fmt.format(b_id, eng["name"], e_type, f"{mean:.2f}", f"{median:.2f}", f"±{std_dev:.2f}", rel_str, csum_status))
             summary_md_rows.append(f"| `{b_id}` | {b_meta.get('author', 'Standard')} | {eng['name']} | **{e_type}** | {e_backend} | {mean:.2f} ms | {median:.2f} ms | {rel_str} | `{csum}` ({csum_status}) |")
 
     # 5. Export JSON
@@ -469,7 +510,8 @@ def main():
         "timestamp": time.time() * 1000,
         "config": {
             "iterations": args.iterations,
-            "warmup": args.warmup
+            "warmup": args.warmup,
+            "baseline": baseline_id
         },
         "engines": active_engines,
         "benchmarks": bench_meta_list,
@@ -482,11 +524,13 @@ def main():
     print(f"\n[+] Raw results written to: {json_path}")
 
     # 6. Export Summary Markdown
+    baseline_eng = next((e for e in active_engines if e["id"] == baseline_id), None)
+    baseline_label = baseline_eng["name"] if baseline_eng else baseline_id
     summary_md_path = out_dir / "summary.md"
     with open(summary_md_path, "w", encoding="utf-8") as f:
         f.write("# JavaScript Engines Benchmark Summary\n\n")
         f.write(f"Generated on {time.ctime()} with {args.iterations} measurement passes and {args.warmup} warmups.\n\n")
-        f.write("| Benchmark | Author / Origin | Target | Type | VM Backend | Mean Duration | Median Duration | Relative vs Baseline | Mathematical Checksum |\n")
+        f.write(f"| Benchmark | Author / Origin | Target | Type | VM Backend | Mean Duration | Median Duration | vs Baseline ({baseline_label}) | Mathematical Checksum |\n")
         f.write("|:---|:---|:---|:---:|:---|:---:|:---:|:---:|:---:|\n")
         for row in summary_md_rows:
             f.write(row + "\n")

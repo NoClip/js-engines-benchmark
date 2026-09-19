@@ -183,6 +183,7 @@ After running the benchmark suite, the tool generates multiple report formats:
 | Filter Benchmarks | `--benchmarks` | `str...` | *All (01-12)* | Space-separated benchmark names (e.g. `01_arithmetic_loop 02_recursive_fibonacci`). |
 | Measurement Iterations | `--iterations` | `int` | `5` | Number of timed measurement runs per benchmark per engine. |
 | Warmup Passes | `--warmup` | `int` | `2` | Number of untimed warmup passes executed before measurement to prime JIT compilation and caches. |
+| Baseline Engine | `--baseline` | `str` | `v8_turbofan` | Baseline engine ID for relative speedup calculations (e.g. `bun`, `r8`, `v8_turbofan`). |
 | Skip HTML Generation | `--no-html` | `flag` | `False` | Disables rendering the interactive `report.html` dashboard. |
 | Output Directory | `--output-dir` | `str` | `results` | Path to directory where JSON, Markdown, and HTML reports are written. |
 | Help | `-h`, `--help` | `flag` | - | Displays usage syntax, available flags, and exits. |

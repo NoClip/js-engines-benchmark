@@ -114,6 +114,27 @@
             margin-top: 4px;
         }
 
+        .engine-legend {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
         .charts-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -151,6 +172,122 @@
             align-items: center;
         }
 
+        /* Interactive Controls Bar */
+        .controls-bar {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .control-select, .control-input {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .control-select:focus, .control-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+        }
+
+        .search-container {
+            flex-grow: 1;
+            min-width: 240px;
+        }
+
+        .search-container .control-input {
+            width: 100%;
+        }
+
+        .btn-group {
+            display: inline-flex;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .btn-toggle {
+            background: var(--bg-card);
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .btn-toggle:not(:last-child) {
+            border-right: 1px solid var(--border-color);
+        }
+
+        .btn-toggle:hover {
+            background: rgba(88, 166, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .btn-toggle.active {
+            background: var(--accent-blue);
+            color: #0f141c;
+            font-weight: 600;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            accent-color: var(--accent-blue);
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+        }
+
+        .baseline-status-note {
+            background: rgba(88, 166, 255, 0.08);
+            border: 1px solid rgba(88, 166, 255, 0.25);
+            border-radius: 8px;
+            padding: 10px 16px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Table Section */
         .table-section {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
@@ -160,9 +297,23 @@
             overflow-x: auto;
         }
 
-        .table-section h2 {
-            font-size: 1.25rem;
+        .table-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .table-header-row h2 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .table-stats-count {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
         }
 
         table {
@@ -178,6 +329,35 @@
             font-weight: 600;
             padding: 12px 16px;
             border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.15s, background 0.15s;
+        }
+
+        th.sortable:hover {
+            color: var(--accent-blue);
+            background: rgba(88, 166, 255, 0.08);
+        }
+
+        .sort-icon {
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 0.75rem;
+            opacity: 0.4;
+        }
+
+        th.sortable.asc .sort-icon {
+            opacity: 1;
+            color: var(--accent-blue);
+        }
+
+        th.sortable.desc .sort-icon {
+            opacity: 1;
+            color: var(--accent-blue);
         }
 
         td {
@@ -187,7 +367,11 @@
         }
 
         tr:hover td {
-            background: rgba(88, 166, 255, 0.05);
+            background: rgba(88, 166, 255, 0.04);
+        }
+
+        tr.row-is-baseline td {
+            background: rgba(188, 140, 255, 0.04);
         }
 
         .badge {
@@ -210,6 +394,13 @@
             border: 1px solid rgba(248, 81, 73, 0.3);
         }
 
+        .badge-baseline {
+            background: rgba(188, 140, 255, 0.15);
+            color: var(--accent-purple);
+            border: 1px solid rgba(188, 140, 255, 0.3);
+            font-weight: 600;
+        }
+
         .speedup-faster {
             color: var(--accent-green);
             font-weight: 600;
@@ -219,25 +410,19 @@
             color: var(--accent-orange);
         }
 
-        .engine-legend {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+        .matrix-cell-best {
+            font-weight: 700;
+            color: var(--accent-green) !important;
+            background: rgba(63, 185, 80, 0.08);
+            border-radius: 6px;
+            padding: 4px 6px;
         }
 
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
+        .empty-results {
+            text-align: center;
+            padding: 40px 20px;
             color: var(--text-secondary);
-        }
-
-        .legend-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
+            font-size: 0.95rem;
         }
 
         footer {
@@ -271,7 +456,7 @@
             <div class="card">
                 <div class="stat-card-title">Benchmarks Evaluated</div>
                 <div class="stat-card-value" id="card-bench-count">-</div>
-                <div class="stat-card-subtitle">Covering JIT, Stack, Heap, Strings</div>
+                <div class="stat-card-subtitle" id="card-bench-count-sub">Covering JIT, Stack, Heap, Strings</div>
             </div>
             <div class="card">
                 <div class="stat-card-title">Checksum Parity</div>
@@ -295,34 +480,87 @@
                 </div>
             </div>
             <div class="chart-card">
-                <h2>Relative Speedup vs Baseline V8 (Higher is Better)</h2>
+                <h2 id="speedup-chart-title">Relative Speedup vs Baseline (Higher is Better)</h2>
                 <div class="chart-container">
                     <canvas id="speedupChart"></canvas>
                 </div>
             </div>
         </div>
 
+        <!-- Interactive Controls Bar -->
+        <div class="controls-bar">
+            <div class="control-item">
+                <label for="baseline-select" class="control-label">Baseline:</label>
+                <select id="baseline-select" class="control-select"></select>
+            </div>
+
+            <div class="control-item">
+                <span class="control-label">Target Type:</span>
+                <div class="btn-group" id="type-filter">
+                    <button class="btn-toggle active" data-type="all">All</button>
+                    <button class="btn-toggle" data-type="engine">Pure Engines</button>
+                    <button class="btn-toggle" data-type="runtime">Runtimes</button>
+                </div>
+            </div>
+
+            <div class="control-item">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="always-show-baseline">
+                    <span>Always show baseline</span>
+                </label>
+            </div>
+
+            <div class="control-item search-container">
+                <input type="text" id="table-search" class="control-input" placeholder="🔍 Search benchmarks, categories, authors, engines...">
+            </div>
+
+            <div class="control-item">
+                <span class="control-label">View:</span>
+                <div class="btn-group" id="view-mode">
+                    <button class="btn-toggle active" data-view="flat">Detailed List</button>
+                    <button class="btn-toggle" data-view="matrix">Comparison Matrix</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="baseline-status-note" class="baseline-status-note" style="display: none;"></div>
+
+        <!-- Table Section -->
         <div class="table-section">
-            <h2>Benchmark Execution Summary</h2>
+            <div class="table-header-row">
+                <h2>Benchmark Execution Summary</h2>
+                <span class="table-stats-count" id="table-stats-count">Showing results</span>
+            </div>
+
+            <!-- Flat Detailed View -->
             <table id="summary-table">
                 <thead>
                     <tr>
-                        <th>Benchmark</th>
-                        <th>Category</th>
-                        <th>Author / Origin</th>
-                        <th>Target</th>
-                        <th>Type</th>
-                        <th>VM Backend</th>
-                        <th>Mean (ms)</th>
-                        <th>Median (ms)</th>
-                        <th>StdDev</th>
-                        <th>Relative vs Baseline</th>
-                        <th>Checksum Status</th>
+                        <th class="sortable" data-col="benchmark">Benchmark <span class="sort-icon">↕</span></th>
+                        <th class="sortable" data-col="category">Category <span class="sort-icon">↕</span></th>
+                        <th class="sortable" data-col="author">Author / Origin <span class="sort-icon">↕</span></th>
+                        <th class="sortable" data-col="target">Target <span class="sort-icon">↕</span></th>
+                        <th class="sortable" data-col="type">Type <span class="sort-icon">↕</span></th>
+                        <th class="sortable" data-col="backend">VM Backend <span class="sort-icon">↕</span></th>
+                        <th class="sortable" data-col="mean">Mean (ms) <span class="sort-icon">↕</span></th>
+                        <th class="sortable" data-col="median">Median (ms) <span class="sort-icon">↕</span></th>
+                        <th class="sortable" data-col="stddev">StdDev <span class="sort-icon">↕</span></th>
+                        <th class="sortable" data-col="speedup">Relative vs Baseline <span class="sort-icon">↕</span></th>
+                        <th class="sortable" data-col="checksum">Checksum Status <span class="sort-icon">↕</span></th>
                     </tr>
                 </thead>
-                <tbody id="summary-tbody">
-                </tbody>
+                <tbody id="summary-tbody"></tbody>
             </table>
+
+            <!-- Matrix Comparison View -->
+            <table id="matrix-table" style="display: none;">
+                <thead id="matrix-thead"></thead>
+                <tbody id="matrix-tbody"></tbody>
+            </table>
+
+            <div id="empty-state" class="empty-results" style="display: none;">
+                No benchmarks or engines match your current filter and search query.
+            </div>
         </div>
 
         <footer>
@@ -336,13 +574,15 @@
         document.addEventListener("DOMContentLoaded", () => {
             if (!reportData) return;
 
-            // Render Meta
-            document.getElementById("generated-at").textContent = "Generated: " + new Date(reportData.timestamp).toLocaleString();
-            document.getElementById("iterations-meta").textContent = `${reportData.config.iterations} Iterations / ${reportData.config.warmup} Warmups`;
+            // Extract metadata
+            const engines = reportData.engines || [];
+            const benchmarks = reportData.benchmarks || [];
+            const results = reportData.results || {};
+            const config = reportData.config || {};
 
-            const engines = reportData.engines;
-            const benchmarks = reportData.benchmarks;
-            const results = reportData.results;
+            // Render Header & Meta
+            document.getElementById("generated-at").textContent = "Generated: " + new Date(reportData.timestamp).toLocaleString();
+            document.getElementById("iterations-meta").textContent = `${config.iterations || 5} Iterations / ${config.warmup || 2} Warmups`;
 
             document.getElementById("card-engine-count").textContent = engines.length;
             document.getElementById("card-engine-list").textContent = engines.map(e => e.name).join(", ");
@@ -353,7 +593,7 @@
             let passedChecks = 0;
             benchmarks.forEach(b => {
                 const bRes = results[b.id] || {};
-                const refChecksum = bRes[engines[0].id]?.checksum;
+                const refChecksum = bRes[engines[0]?.id]?.checksum;
                 engines.forEach(e => {
                     if (bRes[e.id]) {
                         totalChecks++;
@@ -368,6 +608,24 @@
             document.getElementById("card-parity").textContent = parityPct + "% MATCH";
             document.getElementById("card-parity-sub").textContent = `${passedChecks}/${totalChecks} tests identical checksum`;
 
+            // Calculate overall fastest engine
+            let totalDurations = {};
+            engines.forEach(e => totalDurations[e.id] = 0);
+            benchmarks.forEach(b => {
+                engines.forEach(e => {
+                    if (results[b.id]?.[e.id]?.mean) {
+                        totalDurations[e.id] += results[b.id][e.id].mean;
+                    }
+                });
+            });
+
+            let fastestId = Object.keys(totalDurations).reduce((a, b) => totalDurations[a] < totalDurations[b] ? a : b, engines[0]?.id);
+            let fastestEngine = engines.find(e => e.id === fastestId);
+            if (fastestEngine) {
+                document.getElementById("card-fastest").textContent = fastestEngine.name;
+                document.getElementById("card-fastest-sub").textContent = `Total suite time: ${totalDurations[fastestId].toFixed(1)} ms`;
+            }
+
             // Render Legend
             const legendContainer = document.getElementById("engine-legend");
             engines.forEach(e => {
@@ -379,49 +637,27 @@
                 legendContainer.appendChild(item);
             });
 
-            // Populate Table
-            const tbody = document.getElementById("summary-tbody");
-            benchmarks.forEach(b => {
-                const bRes = results[b.id] || {};
-                const baselineMean = bRes["v8_turbofan"]?.mean || bRes[engines[0].id]?.mean || 1;
-                const refChecksum = bRes[engines[0].id]?.checksum;
+            // State
+            let currentBaselineId = config.baseline || (engines.some(e => e.id === "v8_turbofan") ? "v8_turbofan" : engines[0]?.id);
+            let currentTypeFilter = "all";
+            let alwaysShowBaseline = false;
+            let currentSearch = "";
+            let currentView = "flat";
+            let sortCol = "benchmark";
+            let sortAsc = true;
 
-                engines.forEach((e, idx) => {
-                    const r = bRes[e.id];
-                    if (!r) return;
-
-                    const tr = document.createElement("tr");
-                    const speedup = baselineMean / r.mean;
-                    const speedupClass = speedup >= 1.0 ? "speedup-faster" : "speedup-slower";
-                    const speedupText = speedup >= 1.0 ? `${speedup.toFixed(2)}x faster` : `${(1 / speedup).toFixed(2)}x slower`;
-
-                    const checksumMatch = r.checksum === refChecksum;
-                    const badge = checksumMatch
-                        ? `<span class="badge badge-pass">VALID (${r.checksum})</span>`
-                        : `<span class="badge badge-fail">MISMATCH</span>`;
-
-                    const typeBadge = e.type === "engine"
-                        ? `<span class="badge" style="background: rgba(224, 108, 117, 0.2); color: #e06c75; border: 1px solid rgba(224, 108, 117, 0.4);">ENGINE</span>`
-                        : `<span class="badge" style="background: rgba(97, 175, 239, 0.2); color: #61afef; border: 1px solid rgba(97, 175, 239, 0.4);">RUNTIME</span>`;
-
-                    tr.innerHTML = `
-                        <td><strong>${b.name}</strong></td>
-                        <td>${b.category}</td>
-                        <td><small style="color: var(--text-secondary)">${b.author || 'Standard'}</small></td>
-                        <td><span style="color: ${e.color}">${e.name}</span></td>
-                        <td>${typeBadge}</td>
-                        <td><small style="color: var(--text-secondary)">${e.engine_backend || 'VM'}</small></td>
-                        <td><strong>${r.mean.toFixed(2)}</strong></td>
-                        <td>${r.median.toFixed(2)}</td>
-                        <td>±${r.std_dev.toFixed(2)}</td>
-                        <td class="${speedupClass}">${e.id === "v8_turbofan" ? "1.00x (Baseline)" : speedupText}</td>
-                        <td>${badge}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+            // Populate Baseline Selector
+            const baselineSelect = document.getElementById("baseline-select");
+            engines.forEach(e => {
+                const opt = document.createElement("option");
+                opt.value = e.id;
+                const typeTag = (e.type || "engine").toUpperCase();
+                opt.textContent = `${e.name} [${typeTag}]`;
+                if (e.id === currentBaselineId) opt.selected = true;
+                baselineSelect.appendChild(opt);
             });
 
-            // Render Charts
+            // Initialize Charts
             const chartLabels = benchmarks.map(b => b.name);
             const datasetsTime = engines.map(e => ({
                 label: e.name,
@@ -454,24 +690,11 @@
                 }
             });
 
-            const datasetsSpeedup = engines.map(e => ({
-                label: e.name,
-                backgroundColor: e.color,
-                borderColor: e.color,
-                borderWidth: 1,
-                data: benchmarks.map(b => {
-                    const bRes = results[b.id] || {};
-                    const baselineMean = bRes["v8_turbofan"]?.mean || 1;
-                    const curMean = bRes[e.id]?.mean || baselineMean;
-                    return +(baselineMean / curMean).toFixed(2);
-                })
-            }));
-
-            new Chart(document.getElementById("speedupChart"), {
+            const speedupChart = new Chart(document.getElementById("speedupChart"), {
                 type: "bar",
                 data: {
                     labels: chartLabels,
-                    datasets: datasetsSpeedup
+                    datasets: []
                 },
                 options: {
                     responsive: true,
@@ -484,29 +707,370 @@
                         y: {
                             ticks: { color: "#8b949e" },
                             grid: { color: "#2e3846" },
-                            title: { display: true, text: "Speedup Factor vs V8 (1.0 = Baseline)", color: "#8b949e" }
+                            title: { display: true, text: "Speedup Factor vs Baseline (1.0 = Baseline)", color: "#8b949e" }
                         }
                     }
                 }
             });
 
-            // Calculate overall fastest
-            let totalDurations = {};
-            engines.forEach(e => totalDurations[e.id] = 0);
-            benchmarks.forEach(b => {
-                engines.forEach(e => {
-                    if (results[b.id]?.[e.id]) {
-                        totalDurations[e.id] += results[b.id][e.id].mean;
+            function updateSpeedupChart() {
+                const baseEng = engines.find(e => e.id === currentBaselineId);
+                const baseName = baseEng ? baseEng.name : currentBaselineId;
+
+                speedupChart.data.datasets = engines.map(e => ({
+                    label: e.name,
+                    backgroundColor: e.color,
+                    borderColor: e.color,
+                    borderWidth: 1,
+                    data: benchmarks.map(b => {
+                        const bRes = results[b.id] || {};
+                        const baseMean = bRes[currentBaselineId]?.mean || 1;
+                        const curMean = bRes[e.id]?.mean || baseMean;
+                        return curMean > 0 ? +(baseMean / curMean).toFixed(2) : 0;
+                    })
+                }));
+
+                speedupChart.options.scales.y.title.text = `Speedup Factor vs ${baseName} (1.0 = Baseline)`;
+                document.getElementById("speedup-chart-title").textContent = `Relative Speedup vs Baseline: ${baseName} (Higher is Better)`;
+                speedupChart.update();
+            }
+
+            // Flat Table Rendering
+            function renderFlatTable() {
+                const tbody = document.getElementById("summary-tbody");
+                tbody.innerHTML = "";
+
+                const baseEng = engines.find(e => e.id === currentBaselineId);
+                const baseName = baseEng ? baseEng.name : currentBaselineId;
+
+                // Build flat dataset
+                const rows = [];
+                benchmarks.forEach(b => {
+                    const bRes = results[b.id] || {};
+                    const baseMean = bRes[currentBaselineId]?.mean || 1.0;
+                    const refChecksum = bRes[currentBaselineId]?.checksum || bRes[engines[0]?.id]?.checksum;
+
+                    engines.forEach(e => {
+                        const r = bRes[e.id];
+                        if (!r) return;
+
+                        const isBaseline = (e.id === currentBaselineId);
+                        const speedup = r.mean > 0 ? (baseMean / r.mean) : 0.0;
+                        const checksumMatch = (r.checksum === refChecksum);
+
+                        rows.push({
+                            b,
+                            e,
+                            r,
+                            isBaseline,
+                            speedup,
+                            checksumMatch
+                        });
+                    });
+                });
+
+                // Apply Filters
+                const q = currentSearch.trim().toLowerCase();
+                const filtered = rows.filter(item => {
+                    const textMatch = !q ||
+                        item.b.name.toLowerCase().includes(q) ||
+                        item.b.category.toLowerCase().includes(q) ||
+                        (item.b.author || '').toLowerCase().includes(q) ||
+                        item.e.name.toLowerCase().includes(q) ||
+                        (item.e.engine_backend || '').toLowerCase().includes(q);
+
+                    const typeMatch = (currentTypeFilter === "all") || (item.e.type === currentTypeFilter);
+
+                    if (textMatch && typeMatch) return true;
+
+                    // Always show baseline option
+                    if (alwaysShowBaseline && item.isBaseline && textMatch) {
+                        return true;
                     }
+
+                    return false;
+                });
+
+                // Update baseline indicator note
+                const noteEl = document.getElementById("baseline-status-note");
+                const baselineInView = filtered.some(i => i.isBaseline);
+                if (!baselineInView && filtered.length > 0) {
+                    noteEl.innerHTML = `ℹ️ <strong>Baseline:</strong> Relative metrics calculated against <strong>${baseName}</strong> (hidden by current target type filter).`;
+                    noteEl.style.display = "flex";
+                } else {
+                    noteEl.style.display = "none";
+                }
+
+                // Sorting
+                filtered.sort((a, b) => {
+                    let res = 0;
+                    switch (sortCol) {
+                        case "benchmark":
+                            res = a.b.name.localeCompare(b.b.name);
+                            break;
+                        case "category":
+                            res = a.b.category.localeCompare(b.b.category);
+                            break;
+                        case "author":
+                            res = (a.b.author || '').localeCompare(b.b.author || '');
+                            break;
+                        case "target":
+                            res = a.e.name.localeCompare(b.e.name);
+                            break;
+                        case "type":
+                            res = a.e.type.localeCompare(b.e.type);
+                            break;
+                        case "backend":
+                            res = (a.e.engine_backend || '').localeCompare(b.e.engine_backend || '');
+                            break;
+                        case "mean":
+                            res = a.r.mean - b.r.mean;
+                            break;
+                        case "median":
+                            res = a.r.median - b.r.median;
+                            break;
+                        case "stddev":
+                            res = a.r.std_dev - b.r.std_dev;
+                            break;
+                        case "speedup":
+                            res = a.speedup - b.speedup;
+                            break;
+                        case "checksum":
+                            res = (a.checksumMatch ? 1 : 0) - (b.checksumMatch ? 1 : 0);
+                            break;
+                        default:
+                            res = 0;
+                    }
+                    return sortAsc ? res : -res;
+                });
+
+                // Render Rows
+                filtered.forEach(item => {
+                    const tr = document.createElement("tr");
+                    if (item.isBaseline) {
+                        tr.className = "row-is-baseline";
+                    }
+
+                    let speedupHtml = "";
+                    if (item.isBaseline) {
+                        speedupHtml = `<span class="badge badge-baseline">1.00x [BASELINE]</span>`;
+                    } else if (item.speedup >= 1.0) {
+                        speedupHtml = `<span class="speedup-faster">${item.speedup.toFixed(2)}x faster</span>`;
+                    } else {
+                        speedupHtml = `<span class="speedup-slower">${(1 / item.speedup).toFixed(2)}x slower</span>`;
+                    }
+
+                    const badge = item.checksumMatch
+                        ? `<span class="badge badge-pass">VALID (${item.r.checksum})</span>`
+                        : `<span class="badge badge-fail">MISMATCH (${item.r.checksum})</span>`;
+
+                    const typeBadge = item.e.type === "engine"
+                        ? `<span class="badge" style="background: rgba(224, 108, 117, 0.2); color: #e06c75; border: 1px solid rgba(224, 108, 117, 0.4);">ENGINE</span>`
+                        : `<span class="badge" style="background: rgba(97, 175, 239, 0.2); color: #61afef; border: 1px solid rgba(97, 175, 239, 0.4);">RUNTIME</span>`;
+
+                    tr.innerHTML = `
+                        <td><strong>${item.b.name}</strong></td>
+                        <td>${item.b.category}</td>
+                        <td><small style="color: var(--text-secondary)">${item.b.author || 'Standard'}</small></td>
+                        <td><span style="color: ${item.e.color}">●</span> <strong>${item.e.name}</strong></td>
+                        <td>${typeBadge}</td>
+                        <td><small style="color: var(--text-secondary)">${item.e.engine_backend || 'VM'}</small></td>
+                        <td><strong>${item.r.mean.toFixed(2)}</strong></td>
+                        <td>${item.r.median.toFixed(2)}</td>
+                        <td>±${item.r.std_dev.toFixed(2)}</td>
+                        <td>${speedupHtml}</td>
+                        <td>${badge}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Stats Count & Empty state
+                const emptyEl = document.getElementById("empty-state");
+                const countEl = document.getElementById("table-stats-count");
+                if (filtered.length === 0) {
+                    emptyEl.style.display = "block";
+                    countEl.textContent = `0 results found`;
+                } else {
+                    emptyEl.style.display = "none";
+                    countEl.textContent = `Showing ${filtered.length} measurements across ${benchmarks.length} workloads`;
+                }
+            }
+
+            // Matrix Table Rendering
+            function renderMatrixTable() {
+                const thead = document.getElementById("matrix-thead");
+                const tbody = document.getElementById("matrix-tbody");
+                thead.innerHTML = "";
+                tbody.innerHTML = "";
+
+                // Determine visible engines
+                let visibleEngines = engines.filter(e => (currentTypeFilter === "all") || (e.type === currentTypeFilter));
+                if (alwaysShowBaseline && !visibleEngines.some(e => e.id === currentBaselineId)) {
+                    const baseEng = engines.find(e => e.id === currentBaselineId);
+                    if (baseEng) visibleEngines.unshift(baseEng);
+                }
+
+                // Table Header
+                const trHead = document.createElement("tr");
+                trHead.innerHTML = `
+                    <th>Benchmark</th>
+                    <th>Category</th>
+                    <th>Author</th>
+                `;
+                visibleEngines.forEach(e => {
+                    const isBase = (e.id === currentBaselineId);
+                    const tag = isBase ? ` <span class="badge badge-baseline" style="font-size:0.65rem;">BASE</span>` : "";
+                    trHead.innerHTML += `<th style="color: ${e.color}; white-space: nowrap;">${e.name}${tag}</th>`;
+                });
+                thead.appendChild(trHead);
+
+                // Filter benchmarks
+                const q = currentSearch.trim().toLowerCase();
+                const filteredBench = benchmarks.filter(b => {
+                    if (!q) return true;
+                    return b.name.toLowerCase().includes(q) ||
+                           b.category.toLowerCase().includes(q) ||
+                           (b.author || '').toLowerCase().includes(q);
+                });
+
+                // Populate Rows
+                filteredBench.forEach(b => {
+                    const bRes = results[b.id] || {};
+                    const baseMean = bRes[currentBaselineId]?.mean || 1.0;
+
+                    // Find fastest engine for this workload
+                    let fastestMean = Infinity;
+                    let fastestId = null;
+                    visibleEngines.forEach(e => {
+                        const m = bRes[e.id]?.mean;
+                        if (m && m < fastestMean) {
+                            fastestMean = m;
+                            fastestId = e.id;
+                        }
+                    });
+
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td><strong>${b.name}</strong></td>
+                        <td>${b.category}</td>
+                        <td><small style="color: var(--text-secondary)">${b.author || 'Standard'}</small></td>
+                    `;
+
+                    visibleEngines.forEach(e => {
+                        const r = bRes[e.id];
+                        if (!r) {
+                            tr.innerHTML += `<td><span style="color: var(--text-muted);">-</span></td>`;
+                            return;
+                        }
+
+                        const isBase = (e.id === currentBaselineId);
+                        const isBest = (e.id === fastestId && visibleEngines.length > 1);
+                        const speedup = r.mean > 0 ? (baseMean / r.mean) : 0.0;
+
+                        let speedupSub = "";
+                        if (isBase) {
+                            speedupSub = `<div style="font-size:0.75rem; color: var(--accent-purple); font-weight:600;">1.00x Base</div>`;
+                        } else if (speedup >= 1.0) {
+                            speedupSub = `<div style="font-size:0.75rem;" class="speedup-faster">${speedup.toFixed(2)}x faster</div>`;
+                        } else {
+                            speedupSub = `<div style="font-size:0.75rem;" class="speedup-slower">${(1/speedup).toFixed(2)}x slower</div>`;
+                        }
+
+                        const bestClass = isBest ? "matrix-cell-best" : "";
+                        tr.innerHTML += `
+                            <td>
+                                <div class="${bestClass}">
+                                    <div>${r.mean.toFixed(2)} ms</div>
+                                    ${speedupSub}
+                                </div>
+                            </td>
+                        `;
+                    });
+
+                    tbody.appendChild(tr);
+                });
+
+                const countEl = document.getElementById("table-stats-count");
+                countEl.textContent = `Showing ${filteredBench.length} benchmarks × ${visibleEngines.length} engines`;
+            }
+
+            function renderTables() {
+                if (currentView === "flat") {
+                    document.getElementById("summary-table").style.display = "table";
+                    document.getElementById("matrix-table").style.display = "none";
+                    renderFlatTable();
+                } else {
+                    document.getElementById("summary-table").style.display = "none";
+                    document.getElementById("matrix-table").style.display = "table";
+                    renderMatrixTable();
+                }
+            }
+
+            // Event Listeners
+            baselineSelect.addEventListener("change", (e) => {
+                currentBaselineId = e.target.value;
+                updateSpeedupChart();
+                renderTables();
+            });
+
+            document.querySelectorAll("#type-filter .btn-toggle").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll("#type-filter .btn-toggle").forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    currentTypeFilter = btn.dataset.type;
+                    renderTables();
                 });
             });
 
-            let fastestId = Object.keys(totalDurations).reduce((a, b) => totalDurations[a] < totalDurations[b] ? a : b);
-            let fastestEngine = engines.find(e => e.id === fastestId);
-            if (fastestEngine) {
-                document.getElementById("card-fastest").textContent = fastestEngine.name;
-                document.getElementById("card-fastest-sub").textContent = `Total suite time: ${totalDurations[fastestId].toFixed(1)} ms`;
-            }
+            document.querySelectorAll("#view-mode .btn-toggle").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll("#view-mode .btn-toggle").forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    currentView = btn.dataset.view;
+                    renderTables();
+                });
+            });
+
+            const alwaysShowCheckbox = document.getElementById("always-show-baseline");
+            alwaysShowCheckbox.checked = false; // Disabled by default
+            alwaysShowCheckbox.addEventListener("change", (e) => {
+                alwaysShowBaseline = e.target.checked;
+                renderTables();
+            });
+
+            const searchInput = document.getElementById("table-search");
+            searchInput.addEventListener("input", (e) => {
+                currentSearch = e.target.value;
+                renderTables();
+            });
+
+            // Sorting event listeners on flat table headers
+            document.querySelectorAll("#summary-table th.sortable").forEach(th => {
+                th.addEventListener("click", () => {
+                    const col = th.dataset.col;
+                    if (sortCol === col) {
+                        sortAsc = !sortAsc;
+                    } else {
+                        sortCol = col;
+                        sortAsc = (col === "speedup") ? false : true; // speedup default descending
+                    }
+
+                    // Update UI arrows
+                    document.querySelectorAll("#summary-table th.sortable").forEach(h => {
+                        h.classList.remove("asc", "desc");
+                        h.querySelector(".sort-icon").textContent = "↕";
+                    });
+
+                    th.classList.add(sortAsc ? "asc" : "desc");
+                    th.querySelector(".sort-icon").textContent = sortAsc ? "▲" : "▼";
+
+                    renderFlatTable();
+                });
+            });
+
+            // Initial Renders
+            updateSpeedupChart();
+            renderTables();
         });
     </script>
 </body>
